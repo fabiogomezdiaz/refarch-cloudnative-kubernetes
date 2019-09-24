@@ -2,7 +2,7 @@ apiVersion: v1
 entries:
   auth:
   - apiVersion: v1
-    created: "2019-09-24T12:08:06.494378-05:00"
+    created: "2019-09-24T12:09:01.057459-05:00"
     description: BlueCompute Auth Microservice
     digest: 3e2bc1f36d72cfcb70396d4b7d62c0e97c67db614a769dab64c955edd0114f24
     name: auth
@@ -11,7 +11,7 @@ entries:
     version: 0.6.0
   bluecompute-ce:
   - apiVersion: v1
-    created: "2019-09-24T12:08:06.505955-05:00"
+    created: "2019-09-24T12:09:01.068286-05:00"
     dependencies:
     - condition: auth.enabled
       name: auth
@@ -59,107 +59,9 @@ entries:
     urls:
     - https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts/bluecompute-ce-0.0.9.tgz
     version: 0.0.9
-  - apiVersion: v1
-    created: "2019-09-24T12:08:06.525113-05:00"
-    dependencies:
-    - condition: auth.enabled
-      name: auth
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts
-      version: 0.5.0
-    - condition: catalog.enabled
-      name: catalog
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts
-      version: 0.5.0
-    - condition: customer.enabled
-      name: customer
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts
-      version: 0.5.0
-    - condition: inventory.enabled
-      name: inventory
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts
-      version: 0.5.0
-    - condition: orders.enabled
-      name: orders
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts
-      version: 0.5.0
-    - condition: web.enabled
-      name: web
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts
-      version: 0.5.0
-    - condition: mysql.enabled
-      name: mysql
-      repository: https://kubernetes-charts.storage.googleapis.com
-      version: 0.8.2
-    - condition: elasticsearch.enabled
-      name: elasticsearch
-      repository: http://storage.googleapis.com/kubernetes-charts-incubator
-      version: 1.4.0
-    - condition: mariadb.enabled
-      name: mariadb
-      repository: https://kubernetes-charts.storage.googleapis.com
-      version: 4.4.2
-    - condition: couchdb.enabled
-      name: couchdb
-      repository: http://storage.googleapis.com/kubernetes-charts-incubator
-      version: 0.1.7
-    description: Bluecompute Application Chart
-    digest: 10240ca82b973ca0521827a6ba3434ada218e0a738f5c027163d5a17b94c866b
-    name: bluecompute-ce
-    urls:
-    - https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts/bluecompute-ce/bluecompute-ce-0.0.8.tgz
-    version: 0.0.8
-  - apiVersion: v1
-    created: "2019-09-24T12:08:06.51757-05:00"
-    dependencies:
-    - condition: auth.enabled
-      name: auth
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.4.0
-    - condition: catalog.enabled
-      name: catalog
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.4.0
-    - condition: catalogelasticsearch.enabled
-      name: catalogelasticsearch
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.3.0
-    - condition: customer.enabled
-      name: customer
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.4.0
-    - condition: customercouchdb.enabled
-      name: customercouchdb
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.3.0
-    - condition: inventory.enabled
-      name: inventory
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.4.0
-    - condition: inventorymysql.enabled
-      name: inventorymysql
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.4.0
-    - condition: orders.enabled
-      name: orders
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.4.0
-    - condition: ordersmysql.enabled
-      name: ordersmysql
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.4.0
-    - condition: web.enabled
-      name: web
-      repository: https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/master/docs/charts
-      version: 0.4.0
-    description: Bluecompute Application Chart
-    digest: a75b17096b5ba4a410cfb05479ea7ac08e2d9b1d0f58da55fea6edcad477f606
-    name: bluecompute-ce
-    urls:
-    - https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts/bluecompute-ce/bluecompute-ce-0.0.6.tgz
-    version: 0.0.6
   catalog:
   - apiVersion: v1
-    created: "2019-09-24T12:08:06.506881-05:00"
+    created: "2019-09-24T12:09:01.069026-05:00"
     description: BlueCompute Catalog Microservice
     digest: 890be60fbc561490d43370edc7bb268d40518a927cfbbc68ef74026647505749
     name: catalog
@@ -169,7 +71,7 @@ entries:
   couchdb:
   - apiVersion: v1
     appVersion: 2.3.0
-    created: "2019-09-24T12:08:06.507968-05:00"
+    created: "2019-09-24T12:09:01.069676-05:00"
     description: A database featuring seamless multi-master sync, that scales from
       big data to mobile, with an intuitive HTTP/JSON API and designed for reliability.
     digest: 2e41d05cf62d7bbe598b3f3ff36bd76195209b06c800fffd85e236fa98a91159
@@ -187,7 +89,7 @@ entries:
     version: 1.1.1
   customer:
   - apiVersion: v1
-    created: "2019-09-24T12:08:06.508993-05:00"
+    created: "2019-09-24T12:09:01.070431-05:00"
     description: BlueCompute Customer Microservice
     digest: 1a1c768090c5d75b5aec21e392b663f81b9f128c5969211c0dc193d99dff97eb
     name: customer
@@ -196,7 +98,7 @@ entries:
     version: 0.6.0
   inventory:
   - apiVersion: v1
-    created: "2019-09-24T12:08:06.509985-05:00"
+    created: "2019-09-24T12:09:01.072026-05:00"
     description: BlueCompute Inventory Microservice
     digest: d84e9126ab97e3856ff17240d96aa796949dd63efbb751d21d80ef02f69bd22b
     name: inventory
@@ -205,7 +107,7 @@ entries:
     version: 0.6.0
   orders:
   - apiVersion: v1
-    created: "2019-09-24T12:08:06.511948-05:00"
+    created: "2019-09-24T12:09:01.072778-05:00"
     description: Bluecompute Orders Microservice
     digest: 5ca2261c2801362d1fa742fec4c3ecd8ef247df7aecb2c29326f898a76b739ed
     name: orders
@@ -214,11 +116,11 @@ entries:
     version: 0.6.0
   web:
   - apiVersion: v1
-    created: "2019-09-24T12:08:06.513128-05:00"
+    created: "2019-09-24T12:09:01.073505-05:00"
     description: BlueCompute Web BFF app
     digest: a37defd5b1eaa1813329cbb61f58facc7776e38b43a4390e12d9627006d890ea
     name: web
     urls:
     - https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts/web-0.6.0.tgz
     version: 0.6.0
-generated: "2019-09-24T12:08:06.492046-05:00"
+generated: "2019-09-24T12:09:01.056469-05:00"
