@@ -1,15 +1,24 @@
-.DS_Store
-.AppleDouble
-.LSOverride
+# Chart related files
+bluecompute/charts
+bluecompute/Chart.lock
+bluecompute/values.yaml.*
+
+# Ignore test YAML files
+*.yaml.test
+
+# Ignore bluecompute-os folder
+bluecompute-os
 
 # Icon must end with two \r
 Icon
-
 
 # Thumbnails
 ._*
 
 # Files that might appear in the root of a volume
+.DS_Store
+.AppleDouble
+.LSOverride
 .DocumentRevisions-V100
 .fseventsd
 .Spotlight-V100
@@ -25,25 +34,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+# Ignore HTLM rendered version of README document
 README.html
-
-bluecompute/charts
-bluecompute/requirements.lock
-
-bluecompute-ce/charts
-bluecompute-ce/requirements.lock
-bluecompute-ce/values.yaml.*
 
 # SSL Certificates
 *.crt
 *.key
-
-# Chart related files
-bluecompute-ce/charts
-bluecompute-ce/requirements.lock
-
-# Ignore test YAML files
-*.yaml.test
-
-# Ignore bluecompute-os folder
-bluecompute-os
