@@ -44,7 +44,7 @@ Below are the steps to deploy the contents of an existing Helm chart into an Ope
 * Deploying the resource files into an OpenShift project.
 * Exposing the services using OpenShift Routes.
 
-The first half of this guide explains the steps for applying container best practices to a `Dockerfile` so it will work on OpenShift. The second half applies the guidelines of the first half to a specific example, the **IBM Microservices Reference Architecture** Helm Charts (known as [`bluecompute-ce`](https://github.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/tree/spring)), converting its existing Helm Charts to OpenShift-compatible YAML files.
+The first half of this guide explains the steps for applying container best practices to a `Dockerfile` so it will work on OpenShift. The second half applies the guidelines of the first half to a specific example, the **IBM Microservices Reference Architecture** Helm Charts (known as [`bluecompute`](https://github.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/tree/spring)), converting its existing Helm Charts to OpenShift-compatible YAML files.
 
 **NOTE:** Assuming you have gone through all the Requirements in the following section, you should allow 30-45 minutes to complete this how-to.
 
@@ -64,7 +64,7 @@ The following sections explain how to modify your `Dockerfile` and Helm Charts t
 ### 1. Creating Non-Root Docker Images
 OpenShift enforces security best practices for containers out of the box, such as requiring Docker images to run as non-root and disallowing privileged containers, which can be harmful to the OpenShift cluster if they are compromised. In this section explains how to make a Spring Boot-based `Dockerfile` run as non-root.
 
-Let's look at the `Dockerfile` for `bluecompute-ce's` inventory service for reference. You don't need to worry about what the service does, as we are only concerned with how the `Dockerfile` packages the code, followed by how to make it run as non-root.
+Let's look at the `Dockerfile` for `bluecompute's` inventory service for reference. You don't need to worry about what the service does, as we are only concerned with how the `Dockerfile` packages the code, followed by how to make it run as non-root.
 
 **NOTE:** To learn more about `Dockerfile` options and their syntax, check out the [official documentation](https://docs.docker.com/engine/reference/builder/).
 
@@ -197,7 +197,7 @@ docker push ${REGISTRY_LOCATION}/bluecompute-inventory:openshift
 Where `${REGISTRY_LOCATION}` is the location of your Docker Registry and `openshift` is the new tag value for the image.
 
 ### 2. Updating Helm Charts
-Before generating YAML from the Helm Charts, we have to update the Helm Charts with the newly-built Docker image. Simply edit the `values.yaml` file in the Chart and change the image's `tag` value to that of the new Docker image. For example, here is an excerpt of the `values.yaml` file for `bluecompute-ce`'s `inventory` Helm Chart:
+Before generating YAML from the Helm Charts, we have to update the Helm Charts with the newly-built Docker image. Simply edit the `values.yaml` file in the Chart and change the image's `tag` value to that of the new Docker image. For example, here is an excerpt of the `values.yaml` file for `bluecompute`'s `inventory` Helm Chart:
 
 ```yaml
 replicaCount: 1
@@ -221,27 +221,27 @@ image:
 
 Generally speaking, this is all you need to update a Helm Chart with an OpenShift compatible non-root Docker image. Most community Helm Charts don't have complicated configurations that require root privileges. But for those that do, they usually come in the form of one-off init containers that perform some administrative tasks on the container hosts. Usually, the workaround for those is to remove those containers from the charts themselves and perform those actions on the host yourself before deploying the charts. However, as with anything in software engineering, the changes you will have to make will depend on the chart and the workload itself and must be addressed individually.
 
-With that knowledge in mind, let's move on to going over how we adapted the `bluecompute-ce` application to run its processes as non-root in order to work on OpenShift.
+With that knowledge in mind, let's move on to going over how we adapted the `bluecompute` application to run its processes as non-root in order to work on OpenShift.
 
 ## Deploy Example Helm Charts on OpenShift
-BlueCompute (known as `bluecompute-ce`) is IBM's Cloud-native Microservices Reference Architecture, which is used to demonstrate how clients can easily deploy and run a complex microservices application on Kubernetes based platforms such as [IBM Cloud Kubernetes Service](https://www.ibm.com/cloud/container-service) and [IBM Cloud Private](https://www.ibm.com/cloud/private), which are public and private cloud based, respectively.
+BlueCompute (known as `bluecompute`) is IBM's Cloud-native Microservices Reference Architecture, which is used to demonstrate how clients can easily deploy and run a complex microservices application on Kubernetes based platforms such as [IBM Cloud Kubernetes Service](https://www.ibm.com/cloud/container-service) and [IBM Cloud Private](https://www.ibm.com/cloud/private), which are public and private cloud based, respectively.
 
 ![Architecture](../../static/imgs/diagram_bluecompute_openshift.gif)
 
-The application itself is an [Angular JS 2](https://angular.io/) web front-end that communicates with multiple [Java Spring Boot](https://spring.io/projects/spring-boot) microservices. Each of those backend microservices communicates with its own datastore, which, in typical microservices fashion, can be whatever the developers choose to be the best tool for the job. In `bluecompute-ce`'s case, the datastores are Elasticsearch, CouchDB, MySQL, and MariaDB.
+The application itself is an [Angular JS 2](https://angular.io/) web front-end that communicates with multiple [Java Spring Boot](https://spring.io/projects/spring-boot) microservices. Each of those backend microservices communicates with its own datastore, which, in typical microservices fashion, can be whatever the developers choose to be the best tool for the job. In `bluecompute`'s case, the datastores are Elasticsearch, CouchDB, MySQL, and MariaDB.
 
 Each microservice has its own Git repository, which contains not only the application source, but also its respective `Dockerfile` and Helm chart. All of the datastore Helm charts were taken from the community [Helm Chart catalog](https://github.com/helm/charts) to demonstrate that existing applications can leverage community-made Helm charts for datastores.
 
-Lastly, to make deploying the entire application easier, we created the `bluecompute-ce` Helm chart that declares all the individual Helm charts (including the community ones) as dependencies. This lets us deploy all of them at once with a single command. Deploying the application this way takes us 2-5 minutes compared to the 30-45 minutes it used to take us before we adopted Kubernetes.
+Lastly, to make deploying the entire application easier, we created the `bluecompute` Helm chart that declares all the individual Helm charts (including the community ones) as dependencies. This lets us deploy all of them at once with a single command. Deploying the application this way takes us 2-5 minutes compared to the 30-45 minutes it used to take us before we adopted Kubernetes.
 
 As you can see from the diagram animation above, the application architecture doesn't change much (check out original architecture [here](https://github.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/tree/spring#introduction)) when deploying it to OpenShift. The main change is using an `OpenShift Route` to expose the web application outside the cluster instead of Kubernetes `Ingress` or `NodePort`. Also, instead of using `kube-dns` for service discovery, OpenShift uses `core-dns`, which we are not concerned with as developers.
 
-Now that we understand the basic architecture, let's cover the steps to deploy `bluecompute-ce` into OpenShift, following the steps presented in the previous section.
+Now that we understand the basic architecture, let's cover the steps to deploy `bluecompute` into OpenShift, following the steps presented in the previous section.
 
 ### Adopting Container Best Practices on BlueCompute
 As mentioned before, OpenShift enforces security best practices for containers out of the box, such as requiring Docker images to run as non-root and disallowing privileged containers, which can be harmful to the OpenShift cluster if they are compromised.
 
-We looked at what it would take for the `bluecompute-ce` services to adopt container best practices; below is a summary of our findings:
+We looked at what it would take for the `bluecompute` services to adopt container best practices; below is a summary of our findings:
 
 * Although the BlueCompute Docker images were built with official `openjdk` images, the images run as the `root` user.
   + We needed to edit each `Dockerfile` to run as non-root, as explained in a previous section.
@@ -252,12 +252,12 @@ We looked at what it would take for the `bluecompute-ce` services to adopt conta
   + **NOTE:** The actual `elasticsearch` Docker image (not the init container one) runs as non-root, so no need to rebuild that one.
 * The Docker Images for `mysql`, `couchdb`, and `mariadb` Helm charts already run as non-root, so no changes are required for these.
 
-Luckily, the changes to be made were quite simple. We only had to convert all the `bluecompute-ce` services's Docker images to run as non-root as previously discussed. As an FYI, the changes were made to each `Dockerfile` in the `Spring Boot` services (`inventory`, `catalog`, `customer`, `orders`, and `auth`). The `web` service adopted the same concepts but tailored for Node.js.
+Luckily, the changes to be made were quite simple. We only had to convert all the `bluecompute` services's Docker images to run as non-root as previously discussed. As an FYI, the changes were made to each `Dockerfile` in the `Spring Boot` services (`inventory`, `catalog`, `customer`, `orders`, and `auth`). The `web` service adopted the same concepts but tailored for Node.js.
 
 With these changes checked into each service's Git repository, let's proceed with deploying all of the services to OpenShift.
 
 ### Deploy BlueCompute to OpenShift
-Now that we covered the changes for `bluecompute-ce` to adopt not just OpenShift but containers best practices, it's time to deploy `bluecompute-ce` into OpenShift.
+Now that we covered the changes for `bluecompute` to adopt not just OpenShift but containers best practices, it's time to deploy `bluecompute` into OpenShift.
 
 **NOTE:** This section assumes that you have a working OpenShift cluster.
 
@@ -265,7 +265,7 @@ We are not going to deploy the Helm charts themselves into OpenShift. Though it 
 
 There is also the option of converting the Helm charts into [OpenShift Templates](https://docs.okd.io/latest/dev_guide/templates.html), but that would require a lot of tedious work that's beyond the scope of this guide.
 
-The main goal is to get `bluecompute-ce` deployed into an OpenShift cluster as effortlessly while following as many best practices as possible. So, in this guide we will be converting the `bluecompute-ce` Helm chart and all of its dependency charts into regular Kubernetes YAML files by using the `helm template` function to deploy them into the OpenShift cluster.
+The main goal is to get `bluecompute` deployed into an OpenShift cluster as effortlessly while following as many best practices as possible. So, in this guide we will be converting the `bluecompute` Helm chart and all of its dependency charts into regular Kubernetes YAML files by using the `helm template` function to deploy them into the OpenShift cluster.
 
 #### 1. Create `bluecompute` Project in OpenShift
 First, log into the OpenShift cluster:
@@ -274,7 +274,7 @@ First, log into the OpenShift cluster:
 oc login
 ```
 
-Next, create a new project (OpenShift parlance for Kubernetes `namespace`) to deploy the `bluecompute-ce` YAML files:
+Next, create a new project (OpenShift parlance for Kubernetes `namespace`) to deploy the `bluecompute` YAML files:
 
 ```bash
 oc new-project bluecompute
@@ -292,7 +292,7 @@ The reason for using `anyuid` vs `nonroot` SCC is that the Elasticsearch chart h
 oc adm policy add-scc-to-user privileged system:serviceaccount:bluecompute:default
 ```
 
-Now you should be ready to deploy all of `bluecompute-ce` into the `bluecompute` OpenShift Project!
+Now you should be ready to deploy all of `bluecompute` into the `bluecompute` OpenShift Project!
 
 **NOTE:** Assigning the `privileged` SCC to the `default` service account in the `bluecompute` namespace completely relaxes the security around the pods that get deployed to this namespace. This means that any hackers that manage to compromise pods deployed to this namespace have root-level access to the cluster! So assigning the `privileged` SCC should be done with caution and it is NOT recommended for production use. Perhaps a more granular SCC can be used to assign the required capabilities without opening security holes, but that's beyond the scope of this document.
 
@@ -304,7 +304,7 @@ Now generate the Kubernetes YAML files from the Helm Charts. To do so, run the f
 mkdir bluecompute-os
 
 # Generate YAML
-helm template docs/charts/bluecompute-ce/bluecompute-ce-0.0.9.tgz --namespace bluecompute --name bluecompute --set web.service.type=ClusterIP --output-dir bluecompute-os
+helm template charts/bluecompute/bluecompute-0.0.9.tgz --namespace bluecompute --name bluecompute --set web.service.type=ClusterIP --output-dir bluecompute-os
 ```
 
 Where:
@@ -317,13 +317,13 @@ Where:
 The above commands generated YAML files that can be deployed into OpenShift. However, there is still some work to be done. The next section explains the steps.
 
 #### 4. Deploy BlueCompute to OpenShift Project
-To deploy the `bluecompute-ce` YAML files, use the command below:
+To deploy the `bluecompute` YAML files, use the command below:
 
 ```bash
 oc apply --recursive --filename bluecompute-os
 ```
 
-Voilà, you have deployed all of `bluecompute-ce` into an OpenShift cluster! To check on its status to confirm they are up and running, run the following command:
+Voilà, you have deployed all of `bluecompute` into an OpenShift cluster! To check on its status to confirm they are up and running, run the following command:
 
 ```bash
 oc get pods | grep -v test

@@ -14,7 +14,7 @@
       - [Destination Rule](#destination-rule)
       - [Virtual Service](#virtual-service)
       - [Gateway](#gateway)
-      - [Istio YAML files in the main bluecompute-ce chart](#istio-yaml-files-in-the-main-bluecompute-ce-chart)
+      - [Istio YAML files in the main bluecompute chart](#istio-yaml-files-in-the-main-bluecompute-chart)
       - [Recap](#recap)
   * [Deploying Istio Helm Chart](#deploying-istio-helm-chart)
   * [Deploy Istiofied Bluecompute Helm Chart](#deploy-istiofied-bluecompute-helm-chart)
@@ -50,7 +50,7 @@ In this document, we will deploy Istio into a Kubernetes envinronment (IBM Cloud
 	+ If using IBM Cloud Kubernetes Service (IKS), please use the most up-to-date version of helm
 
 ## Blue-Compute Istiofied
-As with any complex application architecture, we had to make some changes to fully support the `bluecompute-ce` application in the Istio service mesh. Luckily, those changes were minimal but were necessary to leverage most of Istio's features and follow best practices.
+As with any complex application architecture, we had to make some changes to fully support the `bluecompute` application in the Istio service mesh. Luckily, those changes were minimal but were necessary to leverage most of Istio's features and follow best practices.
 
 ### Architecture
 ![Architecture](../../static/imgs/istio/diagram_bluecompute_istio.png)
@@ -148,7 +148,7 @@ https://istio.io/docs/setup/kubernetes/spec-requirements/
 ### Liveness and Readiness Probes
 Liveness and Readiness probes are used in Kubernetes to run continuous health checks to determine if a deployment is healthy or not. When you bring Istio into the picture, the probes may stop working if you enable Mutual TLS encryption between services, which makes Kubernetes erroneously think that the services are unhealthy. The reason they stop working is because the liveness and readiness probes are run by the kubelets, which are not part of the service mesh and, therefore, do not benefit from Istio's Mutual TLS.
 
-The `bluecompute-ce` service originally did not have any liveness and readiness probes, so none of the services were affected. But since we are committed to explore most of Istio's features through `bluecompute-ce`, we decided to add our own Liveness and Readiness probes to each service.
+The `bluecompute` service originally did not have any liveness and readiness probes, so none of the services were affected. But since we are committed to explore most of Istio's features through `bluecompute`, we decided to add our own Liveness and Readiness probes to each service.
 
 Since we knew in advance that we wanted to use Mutual TLS between our services, we knew we had to find a way to implement liveness and readiness probes that would work in environments with Mutual TLS enabled or disabled.
 
@@ -229,7 +229,7 @@ To accomplish the above in the `bluecompute-web` service, which is a Node.JS app
 * https://github.com/ibm-cloud-architecture/refarch-cloudnative-bluecompute-web/commit/7de6a4431e478435b3f34144652d8005483d3bdb
 
 ### StatefulSet-Based Services
-In the `bluecompute-ce` chart we use a combination of Deployment and StatefulSet services to run the entire application. The StatefulSet service in the `bluecompute-ce` application include `Elasticsearch`, `MariaDB`, and `CouchDB`. These services benefit from StatefulSets because they provide a sticky identity for each of their pods, which is essential to keep the stateful nature of these services.
+In the `bluecompute` chart we use a combination of Deployment and StatefulSet services to run the entire application. The StatefulSet service in the `bluecompute` application include `Elasticsearch`, `MariaDB`, and `CouchDB`. These services benefit from StatefulSets because they provide a sticky identity for each of their pods, which is essential to keep the stateful nature of these services.
 
 Unfortunately, Istio does not fully support StatefulSets yet, which prevents the Elasticsearch, MariaDB, and CouchDB services from starting. If you look at the following document, it says that if you disable Mutual TLS, the StatefulSet services should just work, but that's not the case for these workloads:
 * https://istio.io/docs/setup/kubernetes/quick-start/#option-1-install-istio-without-mutual-tls-authentication-between-sidecars
@@ -240,12 +240,12 @@ Unfortunately, Istio does not fully support StatefulSets yet, which prevents the
 In the meantime, we had to figure out another way to make the StatefulSet services work in Istio, even when Mutual TLS is enabled for the non-StatefulSet workloads. After doing some reading, we ended up doing the following:
 * Disabling automatic sidecar injection in Elasticsearch, MariaDB, and CouchDB.
 	+ We accomplished this by passing the `sidecar.istio.io/inject: "false"` annotation to their respective StatefulSets. Here is how it was done for each of those services:
-		- [bluecompute-ce/values-istio-basic.yaml#L166](../../bluecompute-ce/values-istio-basic.yaml#L166)
-		- [bluecompute-ce/values-istio-basic.yaml#L175](../../bluecompute-ce/values-istio-basic.yaml#L175)
-		- [bluecompute-ce/values-istio-basic.yaml#L184](../../bluecompute-ce/values-istio-basic.yaml#L184)
-		- [bluecompute-ce/values-istio-basic.yaml#L265](../../bluecompute-ce/values-istio-basic.yaml#L265)
-		- [bluecompute-ce/values-istio-basic.yaml#L413](../../bluecompute-ce/values-istio-basic.yaml#L413)
-		- [bluecompute-ce/values-istio-basic.yaml#L424](../../bluecompute-ce/values-istio-basic.yaml#L424)
+		- [bluecompute/values-istio-basic.yaml#L166](../../bluecompute/values-istio-basic.yaml#L166)
+		- [bluecompute/values-istio-basic.yaml#L175](../../bluecompute/values-istio-basic.yaml#L175)
+		- [bluecompute/values-istio-basic.yaml#L184](../../bluecompute/values-istio-basic.yaml#L184)
+		- [bluecompute/values-istio-basic.yaml#L265](../../bluecompute/values-istio-basic.yaml#L265)
+		- [bluecompute/values-istio-basic.yaml#L413](../../bluecompute/values-istio-basic.yaml#L413)
+		- [bluecompute/values-istio-basic.yaml#L424](../../bluecompute/values-istio-basic.yaml#L424)
 	+ This effectively takes out the services from the service mesh, which allowed them to start normally.
 	+ However, by leaving the services out from the service mesh, we are preventing the services in the service mesh from communicating with these services when Mutual TLS is enabled, which we overcame with the following.
 	+ **NOTE:** Luckily, the Elasticsearch and MariaDB helm charts had the ability to let you provide custom annotations. However, for the CouchDB, we had to fork and edit the chart to enable the ability to provide custom annotations, as shown in the commit below:
@@ -273,13 +273,13 @@ spec:
 ```
 
 By doing the above for Elasticsearch, MariaDB, and CouchDB, the services were able to start and we were able to have the Istio-enabled services communicate with them. If you are curious what all the Destination Rules look like for these services, take a look at them here:
-* [bluecompute-ce/templates/istio_destination_rules.yaml](../../bluecompute-ce/templates/istio_destination_rules.yaml)
+* [bluecompute/templates/istio_destination_rules.yaml](../../bluecompute/templates/istio_destination_rules.yaml)
 
 **NOTE:** The following article was useful for determining when to disable sidecar injection.
 * https://istio.io/help/ops/setup/injection/
 
 ### Custom Istio YAML Files
-By doing the stuff we talked about above, the entire `bluecompute-ce` application is now able to leverage most of Istio's features automatically, such as automatic sidecar injection, Mutual TLS, Telemetry and Tracing.
+By doing the stuff we talked about above, the entire `bluecompute` application is now able to leverage most of Istio's features automatically, such as automatic sidecar injection, Mutual TLS, Telemetry and Tracing.
 
 It is great to have Istio automatically inject sidecars, configure Authentication Policies (Mutual TLS), Destination Rules, and Virtual Services for you. However, sometimes your individual services might require more granular control. Perhaps not all application services can benefit from or require Mutual TLS. Perhaps, like in the case with Elasticsearch, MariaDB, and CouchDB, not all of your existing application services meet the requirements for service mesh support and must be handled on a 1x1 basis. In such cases, having Istio automatically handle everything for you is not ideal and you have to manually configure Istio settings for your services.
 
@@ -448,30 +448,30 @@ Assuming you enabled the gateway and bound it to the Virtual Service correctly, 
 To learn more about Gateways, read the following document:
 * https://istio.io/docs/concepts/traffic-management/#gateways
 
-#### Istio YAML files in the main bluecompute-ce chart
-All the Istio YAML files we talked about in the sections above are mostly specific to the individual microservice charts. The main `bluecompute-ce` leverages those YAML files along with additional Istio YAML files meant for the services Community Charts (MySQL, Elasticsearch, MariaDB, and CouchDB) that we cannot not edit directly. If you are curious to learn about those files, check them out here:
-* [bluecompute-ce/templates/istio_auth_policies.yaml](../../bluecompute-ce/templates/istio_auth_policies.yaml)
-* [bluecompute-ce/templates/istio_destination_rules.yaml](../../bluecompute-ce/templates/istio_destination_rules.yaml)
-* [bluecompute-ce/templates/istio_virtual_services.yaml](../../bluecompute-ce/templates/istio_virtual_services.yaml)
+#### Istio YAML files in the main bluecompute chart
+All the Istio YAML files we talked about in the sections above are mostly specific to the individual microservice charts. The main `bluecompute` leverages those YAML files along with additional Istio YAML files meant for the services Community Charts (MySQL, Elasticsearch, MariaDB, and CouchDB) that we cannot not edit directly. If you are curious to learn about those files, check them out here:
+* [bluecompute/templates/istio_auth_policies.yaml](../../bluecompute/templates/istio_auth_policies.yaml)
+* [bluecompute/templates/istio_destination_rules.yaml](../../bluecompute/templates/istio_destination_rules.yaml)
+* [bluecompute/templates/istio_virtual_services.yaml](../../bluecompute/templates/istio_virtual_services.yaml)
 
-The `bluecompute-ce` chart disables all of the individual gateways in favor of a global gateway, which you can checkout here:
-* [bluecompute-ce/templates/istio_gateway.yaml](../../bluecompute-ce/templates/istio_gateway.yaml)
+The `bluecompute` chart disables all of the individual gateways in favor of a global gateway, which you can checkout here:
+* [bluecompute/templates/istio_gateway.yaml](../../bluecompute/templates/istio_gateway.yaml)
 
-Lastly, in order to avoid tweaking multiple values files or typing long commands to install `bluecompute-ce` with Istio enabled, we decided to provide separate values files, which you can see here:
-* [bluecompute-ce/values-istio-basic.yaml](../../bluecompute-ce/values-istio-basic.yaml)
+Lastly, in order to avoid tweaking multiple values files or typing long commands to install `bluecompute` with Istio enabled, we decided to provide separate values files, which you can see here:
+* [bluecompute/values-istio-basic.yaml](../../bluecompute/values-istio-basic.yaml)
 	+ This file just enables Istio for all of the microservices using the settings and files we talked about before.
 	+ The only thing is that to access the web application we have to use port-forward the web application to our local machine.
-* [bluecompute-ce/values-istio-gateway.yaml](../../bluecompute-ce/values-istio-gateway.yaml)
+* [bluecompute/values-istio-gateway.yaml](../../bluecompute/values-istio-gateway.yaml)
 	+ This file is similar to the file above but has the settings to enable the Global Istio Gateway.
 	+ This chart assumes that you have created wildcard SSL certificate for the `bluecompute.com` domain name and uploaded they certificate and keys as secrets into the Kubernetes cluster.
 	+ More details on how to deploy the Gateway in the later section.
 	+ You can check out the Gateway settings here:
-		- [bluecompute-ce/values-istio-gateway.yaml#L11](../../bluecompute-ce/values-istio-gateway.yaml#L11)
+		- [bluecompute/values-istio-gateway.yaml#L11](../../bluecompute/values-istio-gateway.yaml#L11)
 
 #### Recap
 You have seen the basic Istio YAML files that we included on each microservice's Helm chart. Having these files will allow each microservice to have more control of its Istio settings rather than leave it all up to Istio and potentially run into issues if certain services are not ready for Istio prime-time yet.
 
-On top of the above Istio YAML files, each individual microservice has Istio YAML files to configure settings for their individual data stores, which are optional if you are using the main `bluecompute-ce` Helm chart but are useful if you are deploying each microservice and its datastore individually.
+On top of the above Istio YAML files, each individual microservice has Istio YAML files to configure settings for their individual data stores, which are optional if you are using the main `bluecompute` Helm chart but are useful if you are deploying each microservice and its datastore individually.
 
 ## Deploying Istio Helm Chart
 To deploy Istio into either an IBM Cloud Kubernetes Service (IKS) or IBM Cloud Private (ICP) cluster, we will be using IBM's official [Istio Helm Chart](https://github.com/IBM/charts/tree/master/stable/ibm-istio). The benefit of using the chart is that it's easier to toggle on/off different Istio components such as Ingress and Egress gateways. The chart also comes bundled with non-Istio components such as Grafana, Service Graph, and Kiali, which we can also toggle on/off. Today we are going to deploy the Istio chart with the following components enabled:
@@ -560,10 +560,10 @@ Istio works best when you leverage its automatic sidecar injection feature, whic
 kubectl label namespace default istio-injection=enabled
 ```
 
-You have successfully deployed the Istio chart and enabled automatic sidecar injection on the `default` namespace! Before installing the `bluecompute-ce` helm chart, let's first take a look at the changes & considerations we had to make to make the `bluecompute-ce` chart Istio compatible.
+You have successfully deployed the Istio chart and enabled automatic sidecar injection on the `default` namespace! Before installing the `bluecompute` helm chart, let's first take a look at the changes & considerations we had to make to make the `bluecompute` chart Istio compatible.
 
 ## Deploy Istiofied Bluecompute Helm Chart
-Now that we covered all of the basics concepts and the changes that went into making `bluecompute-ce` Istio-enabled, let's go ahead and deploy it into our Istio-enabled cluster.
+Now that we covered all of the basics concepts and the changes that went into making `bluecompute` Istio-enabled, let's go ahead and deploy it into our Istio-enabled cluster.
 
 ### Setup Helm Repository
 If you are using IBM Cloud Private 3.1 and later, create an image policy that will allow Docker images from Docker Hub as follows:
@@ -571,26 +571,26 @@ If you are using IBM Cloud Private 3.1 and later, create an image policy that wi
 kubectl apply -f https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/static/image_policy.yaml
 ```
 
-Now let's proceed with installing the `bluecompute-ce` chart itself as follows:
+Now let's proceed with installing the `bluecompute` chart itself as follows:
 ```bash
 # Add Helm repository
-helm repo add ibmcase https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts/bluecompute-ce
+helm repo add ibmcase https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/charts/bluecompute
 
 # Refresh Helm repositories
 helm repo update
 ```
 
 ### Deploy the Chart
-As mentioned earlier, to make things easier we made a separate [bluecompute-ce/values-istio-gateway.yaml](../../bluecompute-ce/values-istio-gateway.yaml) file that is pre-configured with most of the Istio settings needed to enable the chart with Istio and also create a simple Istio Ingress Gateway. If you look in [line 9](../../bluecompute-ce/values-istio-gateway.yaml#L9) you will see all of the global Istio settings, which the dependency charts will pick up to enable the Istio YAML files.
+As mentioned earlier, to make things easier we made a separate [bluecompute/values-istio-gateway.yaml](../../bluecompute/values-istio-gateway.yaml) file that is pre-configured with most of the Istio settings needed to enable the chart with Istio and also create a simple Istio Ingress Gateway. If you look in [line 9](../../bluecompute/values-istio-gateway.yaml#L9) you will see all of the global Istio settings, which the dependency charts will pick up to enable the Istio YAML files.
 
-Since we are not using a custom domain name for the Istio Ingress Gateway, we need to setup it up to accept requests from any domain (works for demo purposes but NOT RECOMMENDED FOR PRODUCTION USE), which we did in [line 15](../../bluecompute-ce/values-istio-gateway.yaml#L15) for the Gateway by passing `*` to the hosts list. For the Web Virtual Service to accept requests from any domain through the Istio Ingress Gateway, we need to pass the `*` to the hosts list, which we did in [line 478](../../bluecompute-ce/values-istio-gateway.yaml#L478). Feel free to explore the [Global Gateway](../../bluecompute-ce/templates/istio_gateway.yaml) and the [Web Virtual Service](https://github.com/ibm-cloud-architecture/refarch-cloudnative-bluecompute-web/blob/spring/chart/web/templates/istio_virtual_service.yaml) YAML files to learn how we set them up.
+Since we are not using a custom domain name for the Istio Ingress Gateway, we need to setup it up to accept requests from any domain (works for demo purposes but NOT RECOMMENDED FOR PRODUCTION USE), which we did in [line 15](../../bluecompute/values-istio-gateway.yaml#L15) for the Gateway by passing `*` to the hosts list. For the Web Virtual Service to accept requests from any domain through the Istio Ingress Gateway, we need to pass the `*` to the hosts list, which we did in [line 478](../../bluecompute/values-istio-gateway.yaml#L478). Feel free to explore the [Global Gateway](../../bluecompute/templates/istio_gateway.yaml) and the [Web Virtual Service](https://github.com/ibm-cloud-architecture/refarch-cloudnative-bluecompute-web/blob/spring/chart/web/templates/istio_virtual_service.yaml) YAML files to learn how we set them up.
 
 Now, using the edited values file, install the chart with the command below:
 ```bash
 # Install helm chart
 helm upgrade --install bluecompute --namespace default \
-	-f https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/bluecompute-ce/values-istio-gateway.yaml \
-	ibmcase/bluecompute-ce # --tls if using IBM Cloud Private
+	-f https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/bluecompute/values-istio-gateway.yaml \
+	ibmcase/bluecompute # --tls if using IBM Cloud Private
 ```
 
 It should take a few minutes for all of the pods to be up and running. Run the following command multiple times until all of the pods show a status of `RUNNING`.
@@ -666,7 +666,7 @@ To validate the application, open a browser window and enter the gateway URL fro
 You can reference [this link](https://github.com/ibm-cloud-architecture/refarch-cloudnative-bluecompute-web/tree/spring#validate-the-web-application) to validate the web application functionality. You should be able to see a catalog, be able to login, make orders, and see your orders listed in your profile (once you are logged in).
 
 ## Telemetry & Tracing
-Now that we have deployed the `bluecompute-ce` chart into an Istio-enabled cluster and validated its functionality, let's explore Istio's telemetry and tracing features by generating some load and opening the different telemetry and tracing dashboards.
+Now that we have deployed the `bluecompute` chart into an Istio-enabled cluster and validated its functionality, let's explore Istio's telemetry and tracing features by generating some load and opening the different telemetry and tracing dashboards.
 
 ### Generating Load
 Let's generate some load by performing multiple curl requests against the web service's `/catalog` endpoint through the Istio Gateway. By doing this, we generate telemetry and tracing metrics across the gateway and the web, catalog, and elasticsearch services. To generate the workload, open a new command prompt tab and enter the following command:
@@ -762,10 +762,10 @@ Now, open a new browser tab and go to http://localhost:20001/kiali to open Kiali
 Login using `admin` and `secret` as the username and password, respectively, which come from the secret that you setup earlier when deploying Istio. If successful, you will be presented with the home page, which shows a graph of the services from all of the namespaces in your cluster.
 ![Architecture](../../static/imgs/istio/kiali_2_home.png)
 
-The above can be overwhelming to look at. Instead of looking at the entire cluster, let's just focus on the services in the `default` namespace, which is where `bluecompute-ce` is deployed. To view the services in the `default` namespace, click on the `Namespace` drop-down and select `default`, which should present you with the following view:
+The above can be overwhelming to look at. Instead of looking at the entire cluster, let's just focus on the services in the `default` namespace, which is where `bluecompute` is deployed. To view the services in the `default` namespace, click on the `Namespace` drop-down and select `default`, which should present you with the following view:
 ![Architecture](../../static/imgs/istio/kiali_3_default_graph.png)
 
-You should now see a much cleaner chart showing the services pertaining to `bluecompute-ce`. I personally like this graph better compared to `Service Graph`. From this graph you can click on the individual links between microservices and explore the request volume per second. Let's see what that looks like by clicking on the link between the `istio-ingressgateway` and `web` service, which should present you with the following view:
+You should now see a much cleaner chart showing the services pertaining to `bluecompute`. I personally like this graph better compared to `Service Graph`. From this graph you can click on the individual links between microservices and explore the request volume per second. Let's see what that looks like by clicking on the link between the `istio-ingressgateway` and `web` service, which should present you with the following view:
 ![Architecture](../../static/imgs/istio/kiali_4_gateway_web.png)
 
 Notice above that you can see the requests per second and graphs for different status codes. Also notice in the `Source app` and `Destination app` that you can see namespace and version of the microservices in question. Feel free to explore the other application links.
@@ -800,7 +800,7 @@ To disable automatic sidecar injection, run the following command:
 kubectl label namespace default istio-injection-
 ```
 
-To uninstall `bluecompute-ce` chart, run the following command:
+To uninstall `bluecompute` chart, run the following command:
 ```bash
 helm delete bluecompute --purge # --tls if using IBM Cloud Private
 ```

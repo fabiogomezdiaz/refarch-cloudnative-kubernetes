@@ -23,7 +23,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: default
-  # Change this namespace to the you are installing the bluecompute-ce chart in
+  # Change this namespace to the you are installing the bluecompute chart in
   namespace: bluecompute
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -34,7 +34,7 @@ apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: bluecompute-pod-security-policy
-  # Change this namespace to the you are installing the bluecompute-ce chart in
+  # Change this namespace to the you are installing the bluecompute chart in
   namespace: bluecompute
   labels:
     app: bluecompute

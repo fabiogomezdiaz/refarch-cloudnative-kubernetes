@@ -42,7 +42,7 @@ kubectl --namespace ${NAMESPACE} rollout status deployment/${RELEASE_NAME}-mysql
 ${HELM} upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
 	--set mysql.existingSecret=${RELEASE_NAME}-mysql \
 	../../refarch-cloudnative-micro-inventory/chart/inventory ${TLS}
-	#ibmcase-charts/inventory ${TLS}
+	#ibmcase/inventory ${TLS}
 
 # Get Deployment Name
 DEPLOYMENT="deployment/${RELEASE_NAME}-${CHART_NAME}"

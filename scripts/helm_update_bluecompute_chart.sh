@@ -14,7 +14,7 @@ GIT_BRANCH="master"
 GIT_STASH="no"
 
 # Chart name
-CHART="bluecompute-ce"
+CHART="bluecompute"
 
 # Helm repo location in git repo
 HELM_REPO_LOCATION="charts/${CHART}"
@@ -27,7 +27,7 @@ if [ "$GIT_STASH" = "yes" ]; then
   git stash
 fi
 
-helm repo add ibmcase-charts https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
+helm repo add ibmcase https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
 helm repo update
 
 printf "\n\n${grn}Updating ${CHART} chart...${end}\n"

@@ -20,8 +20,8 @@ There are several components of this architecture.
   + The Orders Service uses an instance of [MariaDB](https://mariadb.org/).
 
 ## Chart Source
-The source for the `BlueCompute-CE` chart can be found at:
-* https://github.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/tree/spring/bluecompute-ce
+The source for the `bluecompute` chart can be found at:
+* https://github.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/tree/spring/bluecompute
 
 The source for the `CouchDB` chart can be found at:
 * https://github.com/fabiogomezdiaz/charts/tree/master/incubator/couchdb
@@ -36,8 +36,8 @@ To deploy the Inventory Chart and its MySQL dependency Chart to a Kubernetes clu
 $ kubectl apply -f https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/static/image_policy.yaml
 
 # Add ibmcase Helm Repo
-$ helm repo add ibmcase https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts/bluecompute-ce
+$ helm repo add ibmcase https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/charts/bluecompute
 
-# Deploy Bluecompute-CE Chart
-$ helm upgrade --install bluecompute ibmcase/bluecompute-ce
+# Deploy bluecompute Chart
+$ helm upgrade --install bluecompute ibmcase/bluecompute
 ```
