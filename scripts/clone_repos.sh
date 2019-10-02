@@ -9,8 +9,8 @@ refarch-cloudnative-micro-inventory \
 refarch-cloudnative-micro-catalog \
 refarch-cloudnative-micro-customer \
 refarch-cloudnative-micro-orders \
-refarch-cloudnative-auth \
-refarch-cloudnative-bluecompute-web"
+refarch-cloudnative-micro-auth \
+refarch-cloudnative-micro-web"
 
 cd ../..
 

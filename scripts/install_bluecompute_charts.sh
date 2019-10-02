@@ -167,7 +167,7 @@ CUSTOMER_SERVICE_PORT=8082
 # Install Auth
 ${HELM} upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
 	--set customer.url=http://${CUSTOMER_RELEASE_NAME}-${CUSTOMER_CHART_NAME}:${CUSTOMER_SERVICE_PORT} \
-	../../refarch-cloudnative-auth/chart/${CHART_NAME} ${TLS}
+	../../refarch-cloudnative-micro-auth/chart/${CHART_NAME} ${TLS}
 
 # Get Deployment Name
 DEPLOYMENT="deployment/${RELEASE_NAME}-${CHART_NAME}"
@@ -183,7 +183,7 @@ CHART_NAME=web
 
 # Install Web
 ${HELM} upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
-	../../refarch-cloudnative-bluecompute-web/chart/${CHART_NAME} ${TLS}
+	../../refarch-cloudnative-micro-web/chart/${CHART_NAME} ${TLS}
 
 # Get Deployment Name
 DEPLOYMENT="deployment/${RELEASE_NAME}-${CHART_NAME}"

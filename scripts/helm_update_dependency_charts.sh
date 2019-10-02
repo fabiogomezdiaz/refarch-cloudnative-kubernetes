@@ -7,8 +7,8 @@ refarch-cloudnative-micro-inventory \
 refarch-cloudnative-micro-catalog \
 refarch-cloudnative-micro-customer \
 refarch-cloudnative-micro-orders \
-refarch-cloudnative-auth \
-refarch-cloudnative-bluecompute-web"
+refarch-cloudnative-micro-auth \
+refarch-cloudnative-micro-web"
 
 # This will be used when building the chart location URL
 GIT_ORG="fabiogomezdiaz"
@@ -50,7 +50,7 @@ function helmupdatechart {
 
 cd ../..
 
-helmupdatechart "refarch-cloudnative-auth"            "auth"
+helmupdatechart "refarch-cloudnative-micro-auth"            "auth"
 
 helmupdatechart "refarch-cloudnative-micro-customer"  "customer"
 
@@ -60,7 +60,7 @@ helmupdatechart "refarch-cloudnative-micro-catalog"   "catalog"
 
 helmupdatechart "refarch-cloudnative-micro-orders"    "orders"
 
-helmupdatechart "refarch-cloudnative-bluecompute-web" "web"
+helmupdatechart "refarch-cloudnative-micro-web" 	  "web"
 
 
 printf "\n\n${grn}Reindexing charts Helm repo...${end}\n"
