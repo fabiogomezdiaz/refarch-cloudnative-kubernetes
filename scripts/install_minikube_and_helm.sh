@@ -31,7 +31,7 @@ until helm list; do echo "waiting for helm to be ready"; sleep 1; done
 
 # Add incubator and bluecompute-charts Helm repos
 helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
-helm repo add ibmcase-charts https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts
+helm repo add ibmcase-charts https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
 
 # Get cluster info
 kubectl cluster-info

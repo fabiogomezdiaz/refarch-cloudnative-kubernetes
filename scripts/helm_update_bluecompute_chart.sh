@@ -5,10 +5,10 @@ source ./colors.sh
 REPO_NAMES="refarch-cloudnative-kubernetes"
 
 # This will be used when building the chart location URL
-GIT_ORG="ibm-cloud-architecture"
+GIT_ORG="fabiogomezdiaz"
 
 # Also used when building the chart location URL
-GIT_BRANCH="spring"
+GIT_BRANCH="master"
 
 # Convenience flag to stash uncommitted work when repackaging the charts
 GIT_STASH="no"
@@ -17,7 +17,7 @@ GIT_STASH="no"
 CHART="bluecompute-ce"
 
 # Helm repo location in git repo
-HELM_REPO_LOCATION="docs/charts/${CHART}"
+HELM_REPO_LOCATION="charts/${CHART}"
 
 # The Base URL for the chart location
 HELM_REPO_URL=$"https://raw.githubusercontent.com/${GIT_ORG}/refarch-cloudnative-kubernetes/${GIT_BRANCH}/${HELM_REPO_LOCATION}"
@@ -27,7 +27,7 @@ if [ "$GIT_STASH" = "yes" ]; then
   git stash
 fi
 
-helm repo add ibmcase-charts https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/docs/charts
+helm repo add ibmcase-charts https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
 helm repo update
 
 printf "\n\n${grn}Updating ${CHART} chart...${end}\n"

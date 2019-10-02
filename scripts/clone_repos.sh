@@ -2,7 +2,7 @@
 
 source ./colors.sh
 
-GIT_ORG="ibm-cloud-architecture"
+GIT_ORG="fabiogomezdiaz"
 
 REPO_NAMES="\
 refarch-cloudnative-micro-inventory \
@@ -16,7 +16,7 @@ cd ../..
 
 for i in ${REPO_NAMES}; do
 	printf "${grn}\n\nCloning ${GIT_ORG}/${i}${end}\n\n"
-	git clone -b spring --single-branch https://github.com/${GIT_ORG}/${i}
+	git clone https://github.com/${GIT_ORG}/${i}
 done
 
 cd refarch-cloudnative-kubernetes/scripts

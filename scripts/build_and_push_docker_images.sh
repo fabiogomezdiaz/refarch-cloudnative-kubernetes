@@ -4,7 +4,7 @@ source ./colors.sh
 
 REGISTRY="docker.io"
 
-NAMESPACE="ibmcase"
+NAMESPACE="fabiogomezdiaz"
 
 TAG="0.6.0"
 

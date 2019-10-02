@@ -11,16 +11,16 @@ refarch-cloudnative-auth \
 refarch-cloudnative-bluecompute-web"
 
 # This will be used when building the chart location URL
-GIT_ORG="ibm-cloud-architecture"
+GIT_ORG="fabiogomezdiaz"
 
 # Also used when building the chart location URL
-GIT_BRANCH="spring"
+GIT_BRANCH="master"
 
 # Convenience flag to stash uncommitted work when repackaging the charts
 GIT_STASH="no"
 
 # The base URL for the charts location
-HELM_REPO_URL=$"https://raw.githubusercontent.com/${GIT_ORG}/refarch-cloudnative-kubernetes/${GIT_BRANCH}/docs/charts"
+HELM_REPO_URL=$"https://raw.githubusercontent.com/${GIT_ORG}/refarch-cloudnative-kubernetes/${GIT_BRANCH}/charts"
 
 function helmupdatechart {
 	DIRECTORY=$1
@@ -38,7 +38,7 @@ function helmupdatechart {
 	cd ../..
 	helm lint chart/$CHART
 	helm package chart/$CHART
-	mv  -f *.tgz ../refarch-cloudnative-kubernetes/docs/charts/
+	mv  -f *.tgz ../refarch-cloudnative-kubernetes/charts/
 
 	if [ "$GIT_STASH" = "yes" ]; then
 	  echo "Popping Stash"
