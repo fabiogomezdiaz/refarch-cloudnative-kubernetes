@@ -50,7 +50,7 @@ function helmupdatechart {
 
 cd ../..
 
-helmupdatechart "refarch-cloudnative-micro-auth"            "auth"
+helmupdatechart "refarch-cloudnative-micro-auth"      "auth"
 
 helmupdatechart "refarch-cloudnative-micro-customer"  "customer"
 
@@ -62,16 +62,10 @@ helmupdatechart "refarch-cloudnative-micro-orders"    "orders"
 
 helmupdatechart "refarch-cloudnative-micro-web" 	  "web"
 
-
 printf "\n\n${grn}Reindexing charts Helm repo...${end}\n"
-cd refarch-cloudnative-kubernetes/docs
+cd refarch-cloudnative-kubernetes
 
-# Move bluecompute helm repo to avoid indexing it into the dependencies helm repo
-mv charts/bluecompute .
-
+# Re-index helm repo
 helm repo index charts --url=${HELM_REPO_URL}
 
-# Move bluecompute helm repo back to its original location
-mv bluecompute charts
-
-cd ../scripts
+cd scripts

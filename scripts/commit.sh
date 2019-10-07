@@ -12,12 +12,18 @@ refarch-cloudnative-micro-orders \
 refarch-cloudnative-micro-auth \
 refarch-cloudnative-micro-web"
 
+COMMIT_MESSAGE="Helm 3 chart format"
+
 cd ../..
 
+
 for i in ${REPO_NAMES}; do
-	printf "${grn}\n\nCloning ${GIT_ORG}/${i}${end}\n\n"
-	git clone https://github.com/${GIT_ORG}/${i}
-	#git clone git@github.com:${GIT_ORG}/${i}
+	printf "${grn}\n\nCommitting changes to ${GIT_ORG}/${i}${end}\n\n";
+    cd ${i};
+	git add .;
+    git commit -m "${COMMIT_MESSAGE}";
+	git push;
+    cd ..;
 done
 
 cd refarch-cloudnative-kubernetes/scripts
