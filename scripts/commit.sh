@@ -12,7 +12,7 @@ refarch-cloudnative-micro-orders \
 refarch-cloudnative-micro-auth \
 refarch-cloudnative-micro-web"
 
-COMMIT_MESSAGE="Helm 3 chart format"
+COMMIT_MESSAGE="REPLACE ME"
 
 cd ../..
 

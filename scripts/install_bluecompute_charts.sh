@@ -1,20 +1,10 @@
 #!/bin/bash
 # Install BlueCompute charts separately
 NAMESPACE="$1"
-TLS="$2"
-HELM="$3"
 
 if [ -z "$NAMESPACE" ]; then
 	NAMESPACE="default"
 	echo "No NAMESPACE provided! Using \"${NAMESPACE}\""
-fi
-
-if [ -z "$TLS" ]; then
-	echo "--tls option will NOT be used!"
-fi
-
-if [ -z "$HELM" ]; then
-	HELM="helm"
 fi
 
 ###### 1. INVENTORY ######
@@ -26,23 +16,23 @@ MYSQL_PASSWORD="password"
 MYSQL_DATABASE="inventorydb"
 
 # Install MySQL
-${HELM} upgrade --install mysql --version 0.10.2 --namespace ${NAMESPACE} \
+helm upgrade --install mysql --version 0.10.2 --namespace ${NAMESPACE} \
 	--set fullnameOverride=${RELEASE_NAME}-mysql \
 	--set mysqlRootPassword=${MYSQL_ROOT_PASSWORD} \
 	--set mysqlUser=${MYSQL_USER} \
 	--set mysqlPassword=${MYSQL_PASSWORD} \
 	--set mysqlDatabase=${MYSQL_DATABASE} \
 	--set persistence.enabled=false \
-	stable/mysql ${TLS}
+	stable/mysql
 
 # Wait for MySQL to start
 kubectl --namespace ${NAMESPACE} rollout status deployment/${RELEASE_NAME}-mysql
 
 # Install Inventory
-${HELM} upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
+helm upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
 	--set mysql.existingSecret=${RELEASE_NAME}-mysql \
-	../../refarch-cloudnative-micro-inventory/chart/inventory ${TLS}
-	#ibmcase/inventory ${TLS}
+	../../refarch-cloudnative-micro-inventory/chart/inventory
+	#ibmcase/inventory
 
 # Get Deployment Name
 DEPLOYMENT="deployment/${RELEASE_NAME}-${CHART_NAME}"
@@ -59,7 +49,7 @@ INVENTORY_RELEASE_NAME=inventory
 INVENTORY_CHART_NAME=inventory
 
 # Install Elasticsearch
-${HELM} upgrade --install elasticsearch --version 1.13.2 --namespace ${NAMESPACE} \
+helm upgrade --install elasticsearch --version 1.13.2 --namespace ${NAMESPACE} \
 	--set fullnameOverride=${RELEASE_NAME}-elasticsearch \
 	--set cluster.env.MINIMUM_MASTER_NODES="2" \
 	--set client.replicas=1 \
@@ -67,16 +57,16 @@ ${HELM} upgrade --install elasticsearch --version 1.13.2 --namespace ${NAMESPACE
 	--set master.persistence.enabled=false \
 	--set data.replicas=1 \
 	--set data.persistence.enabled=false \
-	stable/elasticsearch ${TLS}
+	stable/elasticsearch
 
 # Wait for Elasticsearch to start
 kubectl --namespace ${NAMESPACE} rollout status deployment/${RELEASE_NAME}-elasticsearch-client
 
 # Install Catalog
-${HELM} upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
+helm upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
 	--set elasticsearch.host=${RELEASE_NAME}-elasticsearch-client \
 	--set inventory.url=http://${INVENTORY_RELEASE_NAME}-${INVENTORY_CHART_NAME}:8080 \
-	../../refarch-cloudnative-micro-catalog/chart/${CHART_NAME} ${TLS}
+	../../refarch-cloudnative-micro-catalog/chart/${CHART_NAME}
 
 # Get Deployment Name
 DEPLOYMENT="deployment/${RELEASE_NAME}-${CHART_NAME}"
@@ -93,7 +83,7 @@ COUCHDB_PASSWORD=passw0rd
 CHART_NAME=customer
 
 # Install CouchDB
-${HELM} upgrade --install couchdb --version 0.2.2 --namespace ${NAMESPACE} \
+helm upgrade --install couchdb --version 0.2.2 --namespace ${NAMESPACE} \
 	--set service.externalPort=5985 \
 	--set fullnameOverride=${RELEASE_NAME}-couchdb \
 	--set createAdminSecret=true \
@@ -101,13 +91,13 @@ ${HELM} upgrade --install couchdb --version 0.2.2 --namespace ${NAMESPACE} \
 	--set adminPassword=${COUCHDB_PASSWORD} \
 	--set clusterSize=1 \
 	--set persistentVolume.enabled=false \
-	incubator/couchdb ${TLS}
+	incubator/couchdb
 
 # Install Customer
-${HELM} upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
+helm upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
 	--set couchdb.adminUsername=${COUCHDB_USER} \
 	--set couchdb.adminPassword=${COUCHDB_PASSWORD} \
-	../../refarch-cloudnative-micro-customer/chart/${CHART_NAME} ${TLS}
+	../../refarch-cloudnative-micro-customer/chart/${CHART_NAME}
 
 # Get Deployment Name
 DEPLOYMENT="deployment/${RELEASE_NAME}-${CHART_NAME}"
@@ -127,7 +117,7 @@ MYSQL_USER=dbuser
 MYSQL_PASSWORD=password
 
 # Install MariaDB
-${HELM} upgrade --install orders-mariadb --version 5.2.2 --namespace ${NAMESPACE} \
+helm upgrade --install orders-mariadb --version 5.2.2 --namespace ${NAMESPACE} \
 	--set service.port=${MYSQL_PORT} \
 	--set nameOverride=${RELEASE_NAME}-mariadb \
 	--set rootUser.password=${MYSQL_ROOT_PASSWORD} \
@@ -138,14 +128,14 @@ ${HELM} upgrade --install orders-mariadb --version 5.2.2 --namespace ${NAMESPACE
 	--set master.persistence.enabled=false \
 	--set slave.replicas=1 \
 	--set slave.persistence.enabled=false \
-	stable/mariadb ${TLS}
+	stable/mariadb
 
 # Install Orders
-${HELM} upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
+helm upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
 	--set mariadb.user=${MYSQL_USER} \
 	--set mariadb.password=${MYSQL_PASSWORD} \
 	--set mariadb.database=${MYSQL_DATABASE} \
-	../../refarch-cloudnative-micro-orders/chart/${CHART_NAME} ${TLS}
+	../../refarch-cloudnative-micro-orders/chart/${CHART_NAME}
 
 # Get Deployment Name
 DEPLOYMENT="deployment/${RELEASE_NAME}-${CHART_NAME}"
@@ -165,9 +155,9 @@ CUSTOMER_CHART_NAME=customer
 CUSTOMER_SERVICE_PORT=8082
 
 # Install Auth
-${HELM} upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
+helm upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
 	--set customer.url=http://${CUSTOMER_RELEASE_NAME}-${CUSTOMER_CHART_NAME}:${CUSTOMER_SERVICE_PORT} \
-	../../refarch-cloudnative-micro-auth/chart/${CHART_NAME} ${TLS}
+	../../refarch-cloudnative-micro-auth/chart/${CHART_NAME}
 
 # Get Deployment Name
 DEPLOYMENT="deployment/${RELEASE_NAME}-${CHART_NAME}"
@@ -182,8 +172,8 @@ RELEASE_NAME=web
 CHART_NAME=web
 
 # Install Web
-${HELM} upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
-	../../refarch-cloudnative-micro-web/chart/${CHART_NAME} ${TLS}
+helm upgrade --install ${RELEASE_NAME} --namespace ${NAMESPACE} \
+	../../refarch-cloudnative-micro-web/chart/${CHART_NAME}
 
 # Get Deployment Name
 DEPLOYMENT="deployment/${RELEASE_NAME}-${CHART_NAME}"
