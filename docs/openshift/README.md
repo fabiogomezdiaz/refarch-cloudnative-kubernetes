@@ -304,13 +304,12 @@ Now generate the Kubernetes YAML files from the Helm Charts. To do so, run the f
 mkdir bluecompute-os
 
 # Generate YAML
-helm template charts/bluecompute/bluecompute-0.0.9.tgz --namespace bluecompute --name bluecompute --set web.service.type=ClusterIP --output-dir bluecompute-os
+helm template bluecompute charts/bluecompute-0.0.9.tgz --namespace bluecompute --output-dir bluecompute-os
 ```
 
 Where:
 * `--namespace` represents the Kubernetes namespace to be used to render the YAML files.
   + This means that when deploying the generated YAML files, they will have the `bluecompute` OpenShift hardcoded.
-* `web.service.type` was changed to `ClusterIP` as we will be using OpenShift `routes` to expose the web app in a later section.
 * `name` is just the Helm release name, which is taken into account by Helm to name resources.
   + In this case we are using `bluecompute`.
 
