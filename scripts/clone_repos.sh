@@ -10,7 +10,8 @@ refarch-cloudnative-micro-catalog \
 refarch-cloudnative-micro-customer \
 refarch-cloudnative-micro-orders \
 refarch-cloudnative-micro-auth \
-refarch-cloudnative-micro-web"
+refarch-cloudnative-micro-web \
+refarch-cloudnative-devops-kubernetes"
 
 cd ../..
 
