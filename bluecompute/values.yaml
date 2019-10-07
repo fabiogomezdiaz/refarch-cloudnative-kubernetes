@@ -23,7 +23,7 @@ global:
         caCertificates: /etc/istio/ingressgateway-ca-certs/ca-chain.cert.pem
 
 ingress:
-  enabled: true
+  enabled: false
   hostnames:
     app: #app.bluecompute.com
     api: #api.bluecompute.com
@@ -35,12 +35,15 @@ ingress:
     hosts:
       - bluecompute.com
 
+route:
+  enabled: true
+
 auth:
   enabled: true
   fullnameOverride: auth
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-auth
+    repository: fabiogomezdiaz/bluecompute-auth
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -54,7 +57,7 @@ auth:
       memory: 64Mi
   bash:
     image:
-      repository: ibmcase/bluecompute-bash-curl-ssl
+      repository: fabiogomezdiaz/bluecompute-bash-curl-ssl
       tag: latest
       pullPolicy: IfNotPresent
   hs256key:
@@ -80,11 +83,11 @@ auth:
         httpsRedirect: false
 
 catalog:
-  enabled: true
+  enabled: false
   fullnameOverride: catalog
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-catalog
+    repository: fabiogomezdiaz/bluecompute-catalog
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -128,7 +131,7 @@ catalog:
         httpsRedirect: false
 
 elasticsearch:
-  enabled: true
+  enabled: false
   fullnameOverride: catalog-elasticsearch
   protocol: http
   port: 9200
@@ -191,7 +194,7 @@ customer:
   fullnameOverride: customer
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-customer
+    repository: fabiogomezdiaz/bluecompute-customer
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -209,7 +212,7 @@ customer:
     password: passw0rd
   bash:
     image:
-      repository: ibmcase/bluecompute-bash-curl-ssl
+      repository: fabiogomezdiaz/bluecompute-bash-curl-ssl
       tag: latest
       pullPolicy: IfNotPresent
   hs256key:
@@ -276,7 +279,7 @@ inventory:
   fullnameOverride: inventory
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-inventory
+    repository: fabiogomezdiaz/bluecompute-inventory
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -348,7 +351,7 @@ orders:
   fullnameOverride: orders
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-orders
+    repository: fabiogomezdiaz/bluecompute-orders
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -439,11 +442,11 @@ web:
   fullnameOverride: web
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-web
+    repository: fabiogomezdiaz/bluecompute-web
     tag: 0.6.0
     pullPolicy: Always
   service:
-    type: NodePort
+    type: ClusterIP
     externalPort: 80
     nodePort: 31337
   resources:
@@ -460,8 +463,8 @@ web:
       port: 8083
     catalog:
       protocol: http
-      host: catalog
-      port: 8081
+      host: inventory
+      port: 8080
     customer:
       protocol: http
       host: customer

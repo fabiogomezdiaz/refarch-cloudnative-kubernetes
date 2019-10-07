@@ -1,8 +1,9 @@
+apiVersion: v2
 name: bluecompute
 version: 0.0.9
-description: Bluecompute Application Chart
+description: BlueCompute Application Chart
 home: https://github.com/fabiogomezdiaz/refarch-cloudnative-kubernetes
-maintainers: # (optional)
+maintainers:
   - name: Fabio Gomez
     email: fabio.gomez@ieee.org
     url: https://github.com/fabiogomezdiaz

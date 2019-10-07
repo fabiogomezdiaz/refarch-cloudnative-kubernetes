@@ -35,6 +35,9 @@ ingress:
     hosts:
       - bluecompute.com
 
+route:
+  enabled: false
+
 auth:
   enabled: true
   fullnameOverride: auth
@@ -80,7 +83,7 @@ auth:
         httpsRedirect: false
 
 catalog:
-  enabled: true
+  enabled: false
   fullnameOverride: catalog
   replicaCount: 1
   image:
@@ -128,7 +131,7 @@ catalog:
         httpsRedirect: false
 
 elasticsearch:
-  enabled: true
+  enabled: false
   fullnameOverride: catalog-elasticsearch
   protocol: http
   port: 9200
@@ -443,7 +446,7 @@ web:
     tag: 0.6.0
     pullPolicy: Always
   service:
-    type: NodePort
+    type: ClusterIP
     externalPort: 80
     nodePort: 31337
   resources:
@@ -460,8 +463,8 @@ web:
       port: 8083
     catalog:
       protocol: http
-      host: catalog
-      port: 8081
+      host: inventory
+      port: 8080
     customer:
       protocol: http
       host: customer
