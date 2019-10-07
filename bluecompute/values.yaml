@@ -57,7 +57,7 @@ auth:
       memory: 64Mi
   bash:
     image:
-      repository: fabiogomezdiaz/bluecompute-bash-curl-ssl
+      repository: fabiogomezdiaz/bash-curl-ssl
       tag: latest
       pullPolicy: IfNotPresent
   hs256key:
@@ -212,7 +212,7 @@ customer:
     password: passw0rd
   bash:
     image:
-      repository: fabiogomezdiaz/bluecompute-bash-curl-ssl
+      repository: fabiogomezdiaz/bash-curl-ssl
       tag: latest
       pullPolicy: IfNotPresent
   hs256key:
