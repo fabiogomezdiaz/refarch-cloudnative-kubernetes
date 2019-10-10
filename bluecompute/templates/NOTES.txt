@@ -44,6 +44,12 @@ NOTE: Because Istio is enabled, you need to manually create a user in CouchDB's 
   # Run the script
   ./create_user.sh;
 
+{{- else if .Values.route.enabled }}
+1. To get the entire URL for the Web Application, run the following command:
+  echo "http://$(oc get route {{ .Values.web.fullnameOverride }} -o jsonpath='{.spec.host}')"
+
+2. Open a new web browser window and paste the URL above.
+
 {{- else }}
 1. To get the IP Address for the Web Application, run one the following commands based on your environment:
   IBM Cloud Kubernetes Service:

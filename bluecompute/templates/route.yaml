@@ -2,7 +2,7 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ template "bluecompute.fullname" . }}
+  name: {{ .Values.web.fullnameOverride }}
   labels:
     {{- include "bluecompute.labels" . | indent 4 }}
 spec:
