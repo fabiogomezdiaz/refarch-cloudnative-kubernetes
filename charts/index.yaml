@@ -2,7 +2,7 @@ apiVersion: v1
 entries:
   auth:
   - apiVersion: v2
-    created: "2019-10-14T15:50:42.12206-05:00"
+    created: "2019-10-14T16:00:11.127076-05:00"
     description: BlueCompute Auth Microservice
     digest: f9e24bcbd3068c79957fe8d77ae1467b939e5b50e6ea79710ec4f43e51e343ff
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-auth
@@ -16,7 +16,7 @@ entries:
     version: 0.6.0
   bluecompute:
   - apiVersion: v2
-    created: "2019-10-14T15:50:42.133879-05:00"
+    created: "2019-10-14T16:00:11.138094-05:00"
     dependencies:
     - condition: auth.enabled
       name: auth
@@ -59,7 +59,7 @@ entries:
       repository: https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
       version: 1.1.1
     description: BlueCompute Application Chart
-    digest: b4775453b93757d1323cdfa2ce61c721c838115a75f8a93d337004eeb40013b0
+    digest: 176377d831c9979191d2d0ac3c37dae210d641132868284bd9ccdba7fcd94f05
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-kubernetes
     maintainers:
     - email: fabio.gomez@ieee.org
@@ -71,7 +71,7 @@ entries:
     version: 0.0.9
   catalog:
   - apiVersion: v2
-    created: "2019-10-14T15:50:42.13467-05:00"
+    created: "2019-10-14T16:00:11.139559-05:00"
     description: BlueCompute Catalog Microservice
     digest: ceb2bddbf4f01cf78ebcc0ada6b4573d1a28f6110260dacf8132a7e778155f5b
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-catalog
@@ -86,7 +86,7 @@ entries:
   couchdb:
   - apiVersion: v1
     appVersion: 2.3.0
-    created: "2019-10-14T15:50:42.136202-05:00"
+    created: "2019-10-14T16:00:11.141199-05:00"
     description: A database featuring seamless multi-master sync, that scales from
       big data to mobile, with an intuitive HTTP/JSON API and designed for reliability.
     digest: 2e41d05cf62d7bbe598b3f3ff36bd76195209b06c800fffd85e236fa98a91159
@@ -104,7 +104,7 @@ entries:
     version: 1.1.1
   customer:
   - apiVersion: v2
-    created: "2019-10-14T15:50:42.136948-05:00"
+    created: "2019-10-14T16:00:11.14315-05:00"
     description: BlueCompute Customer Microservice
     digest: 17b98c8816c57b9e43aa6f2ce804c116704d712d789ea472b88bdef482e4d535
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-customer
@@ -118,7 +118,7 @@ entries:
     version: 0.6.0
   inventory:
   - apiVersion: v2
-    created: "2019-10-14T15:50:42.137781-05:00"
+    created: "2019-10-14T16:00:11.144531-05:00"
     description: BlueCompute Inventory Microservice
     digest: 82838a70ba25af38fc6433ce46dd00d81cb79bdc0d36a41c0a752798af60b5c7
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-inventory
@@ -132,7 +132,7 @@ entries:
     version: 0.6.0
   orders:
   - apiVersion: v2
-    created: "2019-10-14T15:50:42.138484-05:00"
+    created: "2019-10-14T16:00:11.145909-05:00"
     description: BlueCompute Orders Microservice
     digest: 0525c78b46b31aee52241ae02e506305fd2c0ed15b7e5da246069cfaf1948693
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-orders
@@ -146,7 +146,7 @@ entries:
     version: 0.6.0
   web:
   - apiVersion: v2
-    created: "2019-10-14T15:50:42.139169-05:00"
+    created: "2019-10-14T16:00:11.147249-05:00"
     description: BlueCompute Web BFF Microservice
     digest: 5dd2eda8484ce4f999f8bae17f00fce4c6b50043fe5696e55bed9747f980f5a9
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-web
@@ -158,4 +158,4 @@ entries:
     urls:
     - https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts/web-0.6.0.tgz
     version: 0.6.0
-generated: "2019-10-14T15:50:42.120897-05:00"
+generated: "2019-10-14T16:00:11.125308-05:00"
