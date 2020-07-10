@@ -226,7 +226,7 @@ To learn more about Liveness and Readiness Probes with Istio, check out the docu
 * https://istio.io/docs/tasks/traffic-management/app-health-check/
 
 To accomplish the above in the `bluecompute-web` service, which is a Node.JS app, we had to instantiate a separate Express server that listens on a different port and only serves a custom `/health` endpoint, similar to the Spring Boot services. To learn more about how that was accomplished, check out the git commit below:
-* https://github.com/ibm-cloud-architecture/refarch-cloudnative-bluecompute-web/commit/7de6a4431e478435b3f34144652d8005483d3bdb
+* https://github.com/fabiogomezdiaz/refarch-cloudnative-bluecompute-web/commit/7de6a4431e478435b3f34144652d8005483d3bdb
 
 ### StatefulSet-Based Services
 In the `bluecompute` chart we use a combination of Deployment and StatefulSet services to run the entire application. The StatefulSet service in the `bluecompute` application include `Elasticsearch`, `MariaDB`, and `CouchDB`. These services benefit from StatefulSets because they provide a sticky identity for each of their pods, which is essential to keep the stateful nature of these services.
@@ -568,13 +568,13 @@ Now that we covered all of the basics concepts and the changes that went into ma
 ### Setup Helm Repository
 If you are using IBM Cloud Private 3.1 and later, create an image policy that will allow Docker images from Docker Hub as follows:
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/static/image_policy.yaml
+kubectl apply -f https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/static/image_policy.yaml
 ```
 
 Now let's proceed with installing the `bluecompute` chart itself as follows:
 ```bash
 # Add Helm repository
-helm repo add ibmcase https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/charts/bluecompute
+helm repo add ibmcase https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
 
 # Refresh Helm repositories
 helm repo update
@@ -583,13 +583,13 @@ helm repo update
 ### Deploy the Chart
 As mentioned earlier, to make things easier we made a separate [bluecompute/values-istio-gateway.yaml](../../bluecompute/values-istio-gateway.yaml) file that is pre-configured with most of the Istio settings needed to enable the chart with Istio and also create a simple Istio Ingress Gateway. If you look in [line 9](../../bluecompute/values-istio-gateway.yaml#L9) you will see all of the global Istio settings, which the dependency charts will pick up to enable the Istio YAML files.
 
-Since we are not using a custom domain name for the Istio Ingress Gateway, we need to setup it up to accept requests from any domain (works for demo purposes but NOT RECOMMENDED FOR PRODUCTION USE), which we did in [line 15](../../bluecompute/values-istio-gateway.yaml#L15) for the Gateway by passing `*` to the hosts list. For the Web Virtual Service to accept requests from any domain through the Istio Ingress Gateway, we need to pass the `*` to the hosts list, which we did in [line 478](../../bluecompute/values-istio-gateway.yaml#L478). Feel free to explore the [Global Gateway](../../bluecompute/templates/istio_gateway.yaml) and the [Web Virtual Service](https://github.com/ibm-cloud-architecture/refarch-cloudnative-bluecompute-web/blob/spring/chart/web/templates/istio_virtual_service.yaml) YAML files to learn how we set them up.
+Since we are not using a custom domain name for the Istio Ingress Gateway, we need to setup it up to accept requests from any domain (works for demo purposes but NOT RECOMMENDED FOR PRODUCTION USE), which we did in [line 15](../../bluecompute/values-istio-gateway.yaml#L15) for the Gateway by passing `*` to the hosts list. For the Web Virtual Service to accept requests from any domain through the Istio Ingress Gateway, we need to pass the `*` to the hosts list, which we did in [line 478](../../bluecompute/values-istio-gateway.yaml#L478). Feel free to explore the [Global Gateway](../../bluecompute/templates/istio_gateway.yaml) and the [Web Virtual Service](https://github.com/fabiogomezdiaz/refarch-cloudnative-bluecompute-web/blob/master/chart/web/templates/istio_virtual_service.yaml) YAML files to learn how we set them up.
 
 Now, using the edited values file, install the chart with the command below:
 ```bash
 # Install helm chart
 helm upgrade --install bluecompute --namespace default \
-	-f https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/bluecompute/values-istio-gateway.yaml \
+	-f https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/bluecompute/values-istio-gateway.yaml \
 	ibmcase/bluecompute # --tls if using IBM Cloud Private
 ```
 
@@ -614,7 +614,7 @@ The logic above is the same logic as the Kubernetes job we disabled, minus the p
 To run the script that creates a user, run the commands below:
 ```bash
 # Get the script
-wget https://raw.githubusercontent.com/ibm-cloud-architecture/refarch-cloudnative-kubernetes/spring/scripts/create_user.sh
+wget https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/scripts/create_user.sh
 
 # Make the script executable
 chmod +x create_user.sh
@@ -663,7 +663,7 @@ To validate the application, open a browser window and enter the gateway URL fro
 
 ![BlueCompute Detail](../../static/imgs/bluecompute_web_home.png?raw=true)
 
-You can reference [this link](https://github.com/ibm-cloud-architecture/refarch-cloudnative-bluecompute-web/tree/spring#validate-the-web-application) to validate the web application functionality. You should be able to see a catalog, be able to login, make orders, and see your orders listed in your profile (once you are logged in).
+You can reference [this link](https://github.com/fabiogomezdiaz/refarch-cloudnative-bluecompute-web/tree/master#validate-the-web-application) to validate the web application functionality. You should be able to see a catalog, be able to login, make orders, and see your orders listed in your profile (once you are logged in).
 
 ## Telemetry & Tracing
 Now that we have deployed the `bluecompute` chart into an Istio-enabled cluster and validated its functionality, let's explore Istio's telemetry and tracing features by generating some load and opening the different telemetry and tracing dashboards.
