@@ -27,8 +27,8 @@ ingress:
   hostnames:
     app: #app.bluecompute.com
     api: #api.bluecompute.com
-  annotations:
-    ingress.bluemix.net/redirect-to-https: "True"
+  #annotations:
+  #  ingress.bluemix.net/redirect-to-https: "True"
   enableTLS: false
   TLS:
   - secretName: bluecompute.com
@@ -43,7 +43,7 @@ auth:
   fullnameOverride: auth
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-auth
+    repository: fabiogomezdiaz/bluecompute-auth
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -57,7 +57,7 @@ auth:
       memory: 64Mi
   bash:
     image:
-      repository: ibmcase/bash-curl-ssl
+      repository: fabiogomezdiaz/bash-curl-ssl
       tag: latest
       pullPolicy: IfNotPresent
   hs256key:
@@ -87,7 +87,7 @@ catalog:
   fullnameOverride: catalog
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-catalog
+    repository: fabiogomezdiaz/bluecompute-catalog
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -139,10 +139,10 @@ elasticsearch:
   password:
   healthcheck: "_cat/health"
   cacertificatebase64:
-  appVersion: 6.6.1
+  appVersion: 6.8.6
   image:
     repository: docker.elastic.co/elasticsearch/elasticsearch-oss
-    tag: 6.6.1
+    tag: 6.8.6
     pullPolicy: IfNotPresent
     #pullSecrets:
     #- sa-default
@@ -194,7 +194,7 @@ customer:
   fullnameOverride: customer
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-customer
+    repository: fabiogomezdiaz/bluecompute-customer
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -212,7 +212,7 @@ customer:
     password: passw0rd
   bash:
     image:
-      repository: ibmcase/bash-curl-ssl
+      repository: fabiogomezdiaz/bash-curl-ssl
       tag: latest
       pullPolicy: IfNotPresent
   hs256key:
@@ -247,7 +247,7 @@ couchdb:
   enabled: true
   image:
     repository: "couchdb"
-    tag: "2.3.0"
+    tag: "2.3.1"
     pullPolicy: IfNotPresent
   fullnameOverride: customer-couchdb
   protocol: http
@@ -263,9 +263,9 @@ couchdb:
     accessModes:
       - ReadWriteOnce
     storageClass:
-  helperImage:
-    repository: kocolosk/couchdb-statefulset-assembler
-    tag: 1.2.0
+  searchImage:
+    repository: kocolosk/couchdb-search
+    tag: 0.1.2
     pullPolicy: IfNotPresent
   initImage:
     repository: "busybox"
@@ -279,7 +279,7 @@ inventory:
   fullnameOverride: inventory
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-inventory
+    repository: fabiogomezdiaz/bluecompute-inventory
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -322,7 +322,7 @@ inventory:
 mysql:
   enabled: true
   image: "mysql"
-  imageTag: "5.7.14"
+  imageTag: "5.7.30"
   imagePullPolicy: IfNotPresent
   fullnameOverride: inventory-mysql
   mysqlRootPassword: admin123
@@ -351,7 +351,7 @@ orders:
   fullnameOverride: orders
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-orders
+    repository: fabiogomezdiaz/bluecompute-orders
     tag: 0.6.0
     pullPolicy: Always
   service:
@@ -400,7 +400,7 @@ mariadb:
   image:
     registry: docker.io
     repository: bitnami/mariadb
-    tag: 10.1.38
+    tag: 10.3.22-debian-10-r27
     pullPolicy: IfNotPresent
   service:
     port: 3307
@@ -442,7 +442,7 @@ web:
   fullnameOverride: web
   replicaCount: 1
   image:
-    repository: ibmcase/bluecompute-web
+    repository: fabiogomezdiaz/bluecompute-web
     tag: 0.6.0
     pullPolicy: Always
   service:

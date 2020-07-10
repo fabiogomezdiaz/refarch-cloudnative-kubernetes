@@ -33,18 +33,19 @@ dependencies:
     repository: https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
     condition: web.enabled
   - name: mysql
-    version: 0.15.0
+    version: 1.6.6
     repository: https://kubernetes-charts.storage.googleapis.com
     condition: mysql.enabled
   - name: elasticsearch
-    version: 1.21.1
+    version: 1.32.5
     repository: https://kubernetes-charts.storage.googleapis.com
     condition: elasticsearch.enabled
   - name: mariadb
-    version: 5.5.3
+    version: 7.3.14
     repository: https://kubernetes-charts.storage.googleapis.com
     condition: mariadb.enabled
   - name: couchdb
-    version: 1.1.1
+    version: 2.3.0
+    #repository: https://kubernetes-charts.storage.googleapis.com
     repository: https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
     condition: couchdb.enabled

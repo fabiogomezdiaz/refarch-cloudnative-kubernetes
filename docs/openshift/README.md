@@ -304,7 +304,7 @@ Now generate the Kubernetes YAML files from the Helm Charts. To do so, run the f
 mkdir bluecompute-os
 
 # Generate YAML
-helm template bluecompute charts/bluecompute-0.0.9.tgz --namespace bluecompute --output-dir bluecompute-os
+helm template bluecompute charts/bluecompute-0.0.9.tgz --namespace bluecompute --set route.enabled=true --output-dir bluecompute-os
 ```
 
 Where:
