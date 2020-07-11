@@ -1,5 +1,4 @@
 #!/bin/bash
-
 source ./colors.sh
 
 GIT_ORG="fabiogomezdiaz"
@@ -12,10 +11,9 @@ refarch-cloudnative-micro-orders \
 refarch-cloudnative-micro-auth \
 refarch-cloudnative-micro-web"
 
-COMMIT_MESSAGE="REPLACE ME"
+COMMIT_MESSAGE="$1"
 
 cd ../..
-
 
 for i in ${REPO_NAMES}; do
 	printf "${grn}\n\nCommitting changes to ${GIT_ORG}/${i}${end}\n\n";
