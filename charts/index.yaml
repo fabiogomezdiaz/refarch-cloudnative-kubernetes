@@ -2,9 +2,9 @@ apiVersion: v1
 entries:
   auth:
   - apiVersion: v2
-    created: "2020-07-10T17:08:51.339937-05:00"
+    created: "2020-07-11T18:15:29.27059-05:00"
     description: BlueCompute Auth Microservice
-    digest: 38ca8d566da2cd3865fe5c44ce7a8fdc4ffb1ec5cba173a2b0c415263017d727
+    digest: 03e2f4fe0dca9438145bf8c8973e834343aa4ad8c6de398e07aba003f302da32
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-auth
     maintainers:
     - email: fabio.gomez@ieee.org
@@ -16,7 +16,7 @@ entries:
     version: 0.6.0
   bluecompute:
   - apiVersion: v2
-    created: "2020-07-10T17:08:51.351146-05:00"
+    created: "2020-07-11T18:15:29.289488-05:00"
     dependencies:
     - condition: auth.enabled
       name: auth
@@ -71,9 +71,9 @@ entries:
     version: 0.0.9
   catalog:
   - apiVersion: v2
-    created: "2020-07-10T17:08:51.354107-05:00"
+    created: "2020-07-11T18:15:29.290562-05:00"
     description: BlueCompute Catalog Microservice
-    digest: a388f8e5d5e43506d824323b3f307867cb56fb4560ef0cf62ed4aac8243c7c0a
+    digest: f1dcfa123266701fb7a331d90a2a495f632dd86ce5f9951393d418bef03425b1
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-catalog
     maintainers:
     - email: fabio.gomez@ieee.org
@@ -86,7 +86,7 @@ entries:
   couchdb:
   - apiVersion: v1
     appVersion: 2.3.1
-    created: "2020-07-10T17:08:51.356916-05:00"
+    created: "2020-07-11T18:15:29.293655-05:00"
     deprecated: true
     description: DEPRECATED A database featuring seamless multi-master sync, that
       scales from big data to mobile, with an intuitive HTTP/JSON API and designed
@@ -106,9 +106,9 @@ entries:
     version: 2.3.0
   customer:
   - apiVersion: v2
-    created: "2020-07-10T17:08:51.359564-05:00"
+    created: "2020-07-11T18:15:29.294556-05:00"
     description: BlueCompute Customer Microservice
-    digest: 2dafed4b8f4c5769f6604407c657c80c58edeab0aef2fa4bd9506c64c884fb4f
+    digest: 07b7719010086c7de213f3abd7780e4bd8321d2d33aa05d252e3185ef66850ae
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-customer
     maintainers:
     - email: fabio.gomez@ieee.org
@@ -120,9 +120,9 @@ entries:
     version: 0.6.0
   inventory:
   - apiVersion: v2
-    created: "2020-07-10T17:08:51.368128-05:00"
+    created: "2020-07-11T18:15:29.295614-05:00"
     description: BlueCompute Inventory Microservice
-    digest: 4cd6f24c28d1b53ffd1e4e42ac97f8643e5b9d06c1b1f18aeed3a5f303e80c2a
+    digest: 6af0566852daeb9822de925845e3a5794b699f0af70d687cfbaf2f1e7ba91f6e
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-inventory
     maintainers:
     - email: fabio.gomez@ieee.org
@@ -134,9 +134,9 @@ entries:
     version: 0.6.0
   orders:
   - apiVersion: v2
-    created: "2020-07-10T17:08:51.37122-05:00"
+    created: "2020-07-11T18:15:29.296746-05:00"
     description: BlueCompute Orders Microservice
-    digest: 72dd05a4e97fc4df35247de72671d0c9ff540ea2bbfbc16b3031709b4ffa4dd9
+    digest: 1860168a10868848f71379e7b9774b5ad01a73aa69e2c42e869b4ae21af8987d
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-orders
     maintainers:
     - email: fabio.gomez@ieee.org
@@ -148,9 +148,9 @@ entries:
     version: 0.6.0
   web:
   - apiVersion: v2
-    created: "2020-07-10T17:08:51.374086-05:00"
+    created: "2020-07-11T18:15:29.297798-05:00"
     description: BlueCompute Web BFF Microservice
-    digest: aeaeca77223a4531ef8018eced797d62873e15f0c6a341f4ec04e807c67e366c
+    digest: d2aa8d17150a956c818d0b68b88ea0b1f64831bea087d16f466fc5e9d8028c80
     home: https://github.com/fabiogomezdiaz/refarch-cloudnative-micro-web
     maintainers:
     - email: fabio.gomez@ieee.org
@@ -160,4 +160,4 @@ entries:
     urls:
     - https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts/web-0.6.0.tgz
     version: 0.6.0
-generated: "2020-07-10T17:08:51.33149-05:00"
+generated: "2020-07-11T18:15:29.267907-05:00"
