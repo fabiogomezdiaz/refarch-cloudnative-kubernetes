@@ -135,30 +135,30 @@ elasticsearch:
   fullnameOverride: catalog-elasticsearch
   protocol: http
   port: 9200
-  username:
-  password:
+  username: ""
+  password: ""
   healthcheck: "_cat/health"
-  cacertificatebase64:
-  appVersion: 6.8.6
+  cacertificatebase64: ""
+  appVersion: 7.10.2  # Updated to a more recent version
   image:
     repository: docker.elastic.co/elasticsearch/elasticsearch-oss
-    tag: 6.8.6
+    tag: 7.10.2  # Updated to match the appVersion
     pullPolicy: IfNotPresent
-    #pullSecrets:
-    #- sa-default
+    # pullSecrets:
+    # - sa-default
   serviceAccounts:
     client:
       create: false
-      name:
+      name: ""
     master:
       create: false
-      name:
+      name: ""
     data:
       create: false
-      name:
+      name: ""
   initImage:
     repository: "busybox"
-    tag: "latest"
+    tag: "1.36.1"  # Updated to a stable version
     pullPolicy: "Always"
   cluster:
     env:
@@ -166,26 +166,26 @@ elasticsearch:
   client:
     replicas: 1
     serviceType: ClusterIP
-    #podAnnotations:
-    #  sidecar.istio.io/inject: "false"
+    # podAnnotations:
+    #   sidecar.istio.io/inject: "false"
   master:
     replicas: 2
     persistence:
       enabled: false
       size: 4Gi
-      storageClass:
+      storageClass: ""
       accessMode: ReadWriteOnce
-    #podAnnotations:
-    #  sidecar.istio.io/inject: "false"
+    # podAnnotations:
+    #   sidecar.istio.io/inject: "false"
   data:
     replicas: 1
     persistence:
       enabled: false
       size: 30Gi
-      storageClass:
+      storageClass: ""
       accessMode: ReadWriteOnce
-    #podAnnotations:
-    #  sidecar.istio.io/inject: "false"
+    # podAnnotations:
+    #   sidecar.istio.io/inject: "false"
   sysctlInitContainer:
     enabled: true
 
@@ -247,7 +247,7 @@ couchdb:
   enabled: true
   image:
     repository: "couchdb"
-    tag: "2.3.1"
+    tag: "3.3.3"  # Updated to the latest stable version
     pullPolicy: IfNotPresent
   fullnameOverride: customer-couchdb
   protocol: http
@@ -262,17 +262,46 @@ couchdb:
     size: 10Gi
     accessModes:
       - ReadWriteOnce
-    storageClass:
+    storageClass: ""
   searchImage:
     repository: kocolosk/couchdb-search
-    tag: 0.1.2
+    tag: 0.2.0  # Updated search image to the latest version
     pullPolicy: IfNotPresent
   initImage:
     repository: "busybox"
-    tag: "latest"
+    tag: "1.36.1"  # Updated to a stable version
     pullPolicy: "Always"
-  #podAnnotations:
-  #  sidecar.istio.io/inject: "false"
+  networkPolicy:
+    enabled: true
+  allowAdminParty: false
+  autoSetup:
+    enabled: false
+  podManagementPolicy: Parallel
+  serviceAccount:
+    enabled: true
+    create: true
+  persistentVolumeClaimRetentionPolicy:
+    enabled: false
+    whenScaled: Retain
+    whenDeleted: Retain
+  couchdbConfig:
+    chttpd:
+      bind_address: any
+      require_valid_user: false
+  livenessProbe:
+    enabled: true
+    failureThreshold: 3
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  readinessProbe:
+    enabled: true
+    failureThreshold: 3
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
 
 inventory:
   enabled: true
@@ -321,8 +350,8 @@ inventory:
 
 mysql:
   enabled: true
-  image: "mysql"
-  imageTag: "5.7.30"
+  image: "bitnami/mysql"
+  imageTag: "8.4.3-debian-12-r4"
   imagePullPolicy: IfNotPresent
   fullnameOverride: inventory-mysql
   mysqlRootPassword: admin123
@@ -334,14 +363,18 @@ mysql:
   persistence:
     enabled: false
     size: 8Gi
-    storageClass:
+    storageClass: ""
     accessMode: ReadWriteOnce
-    existingClaim:
-    subPath:
+    existingClaim: ""
+    subPath: ""
     annotations: {}
-  istio:
-    mTLS: ISTIO_MUTUAL
-    loadBalancer: LEAST_CONN
+  tls:
+    enabled: false
+  metrics:
+    enabled: false
+  networkPolicy:
+    enabled: true
+    allowExternal: true
   busybox:
     image: "busybox"
     tag: "latest"
@@ -400,42 +433,35 @@ mariadb:
   image:
     registry: docker.io
     repository: bitnami/mariadb
-    tag: 10.3.22-debian-10-r27
+    tag: 11.4.4-debian-12-r2
     pullPolicy: IfNotPresent
   service:
-    port: 3307
-  rootUser:
-    password: admin123
-  nameOverride: orders-mariadb
-  db:
-    user: dbuser
+    ports:
+      mysql: 3307
+  auth:
+    rootPassword: admin123
+    database: ordersdb
+    username: dbuser
     password: password
-    name: ordersdb
-  replication:
-    enabled: false
-  master:
+  architecture: standalone
+  primary:
     persistence:
       enabled: false
-      existingClaim:
-      #mountPath: ""
+      existingClaim: ""
       annotations: {}
-      storageClass:
-      accessMode: ReadWriteOnce
+      storageClass: ""
+      accessModes:
+        - ReadWriteOnce
       size: 8Gi
-    #annotations:
-    #  - key: sidecar.istio.io/inject
-    #    value: "false"
-  slave:
-    replicas: 1
+  secondary:
+    replicaCount: 1
     persistence:
       enabled: false
       annotations: {}
-      storageClass:
-      accessMode: ReadWriteOnce
+      storageClass: ""
+      accessModes:
+        - ReadWriteOnce
       size: 8Gi
-    #annotations:
-    #  - key: sidecar.istio.io/inject
-    #    value: "false"
 
 web:
   enabled: true

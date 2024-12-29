@@ -5,7 +5,7 @@ description: BlueCompute Application Chart
 home: https://github.com/fabiogomezdiaz/refarch-cloudnative-kubernetes
 maintainers:
   - name: Fabio Gomez
-    email: fabio.gomez@ieee.org
+    email: hello@fabiogomezdiaz.com
     url: https://github.com/fabiogomezdiaz
 dependencies:
   - name: auth
@@ -33,19 +33,18 @@ dependencies:
     repository: https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
     condition: web.enabled
   - name: mysql
-    version: 1.6.6
-    repository: https://kubernetes-charts.storage.googleapis.com
+    version: 12.2.0
+    repository: https://charts.bitnami.com/bitnami
     condition: mysql.enabled
   - name: elasticsearch
-    version: 1.32.5
-    repository: https://kubernetes-charts.storage.googleapis.com
+    version: 21.4.1
+    repository: https://charts.bitnami.com/bitnami
     condition: elasticsearch.enabled
   - name: mariadb
-    version: 7.3.14
-    repository: https://kubernetes-charts.storage.googleapis.com
+    version: 20.2.1
+    repository: https://charts.bitnami.com/bitnami
     condition: mariadb.enabled
   - name: couchdb
-    version: 2.3.0
-    #repository: https://kubernetes-charts.storage.googleapis.com
-    repository: https://raw.githubusercontent.com/fabiogomezdiaz/refarch-cloudnative-kubernetes/master/charts
+    version: 4.5.6
+    repository: https://apache.github.io/couchdb-helm
     condition: couchdb.enabled
