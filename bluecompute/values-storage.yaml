@@ -107,7 +107,7 @@ catalog:
     imagePullPolicy: IfNotPresent
   elasticsearch:
     protocol: http
-    host: catalog-elasticsearch-client
+    host: catalog-elasticsearch
     port: 9200
     username:
     password:
@@ -131,63 +131,20 @@ catalog:
         httpsRedirect: false
 
 elasticsearch:
-  enabled: false
+  enabled: true
   fullnameOverride: catalog-elasticsearch
-  protocol: http
-  port: 9200
-  username:
-  password:
-  healthcheck: "_cat/health"
-  cacertificatebase64:
-  appVersion: 6.8.6
-  image:
-    repository: docker.elastic.co/elasticsearch/elasticsearch-oss
-    tag: 6.8.6
-    pullPolicy: IfNotPresent
-    #pullSecrets:
-    #- sa-default
-  serviceAccounts:
-    client:
-      create: false
-      name:
-    master:
-      create: false
-      name:
-    data:
-      create: false
-      name:
-  initImage:
-    repository: "busybox"
-    tag: "latest"
-    pullPolicy: "Always"
-  cluster:
-    env:
-      MINIMUM_MASTER_NODES: "2"
-  client:
-    replicas: 1
-    serviceType: ClusterIP
-    #podAnnotations:
-    #  sidecar.istio.io/inject: "false"
   master:
-    replicas: 2
+    replicaCount: 2
     persistence:
       enabled: true
-      size: 4Gi
-      storageClass:
-      accessMode: ReadWriteOnce
-    #podAnnotations:
-    #  sidecar.istio.io/inject: "false"
+  coordinating:
+    replicaCount: 1
   data:
-    replicas: 1
+    replicaCount: 1
     persistence:
       enabled: true
-      size: 30Gi
-      storageClass:
-      accessMode: ReadWriteOnce
-    #podAnnotations:
-    #  sidecar.istio.io/inject: "false"
-  sysctlInitContainer:
-    enabled: true
+  ingest:
+    replicaCount: 1
 
 customer:
   enabled: true
@@ -219,7 +176,7 @@ customer:
     secretName:
     secret:
   couchdb:
-    host: customer-couchdb-svc-couchdb
+    host: "{{ .Release.Name }}-svc-couchdb"
     protocol: http
     port: 5985
     existingSecret:
@@ -245,34 +202,15 @@ customer:
 
 couchdb:
   enabled: true
-  image:
-    repository: "couchdb"
-    tag: "2.3.1"
-    pullPolicy: IfNotPresent
-  fullnameOverride: customer-couchdb
-  protocol: http
-  createAdminSecret: true
-  adminUsername: user
-  adminPassword: passw0rd
-  service:
-    externalPort: 5985
-  clusterSize: 1
-  persistentVolume:
-    enabled: true
-    size: 10Gi
-    accessModes:
-      - ReadWriteOnce
-    storageClass:
-  searchImage:
-    repository: kocolosk/couchdb-search
-    tag: 0.1.2
-    pullPolicy: IfNotPresent
-  initImage:
-    repository: "busybox"
-    tag: "latest"
-    pullPolicy: "Always"
-  #podAnnotations:
-  #  sidecar.istio.io/inject: "false"
+  fullnameOverride: catalog-elasticsearch
+  master:
+    replicaCount: 2
+    persistence:
+      enabled: true
+  data:
+    replicaCount: 1
+    persistence:
+      enabled: true
 
 inventory:
   enabled: true
@@ -321,30 +259,15 @@ inventory:
 
 mysql:
   enabled: true
-  image: "mysql"
-  imageTag: "5.7.30"
-  imagePullPolicy: IfNotPresent
   fullnameOverride: inventory-mysql
-  mysqlRootPassword: admin123
-  mysqlUser: dbuser
-  mysqlPassword: password
-  mysqlDatabase: inventorydb
-  service:
-    port: 3306
-  persistence:
-    enabled: true
-    size: 8Gi
-    storageClass:
-    accessMode: ReadWriteOnce
-    existingClaim:
-    subPath:
-    annotations: {}
-  istio:
-    mTLS: ISTIO_MUTUAL
-    loadBalancer: LEAST_CONN
-  busybox:
-    image: "busybox"
-    tag: "latest"
+  auth:
+    rootPassword: admin123
+    database: inventorydb
+    username: dbuser
+    password: password
+  primary:
+    persistence:
+      enabled: true
 
 orders:
   enabled: true
@@ -371,8 +294,7 @@ orders:
     secretName:
     secret:
   mariadb:
-    # Leaving empty so it gets name form release name and nameOverride
-    host:
+    host: "{{ .Release.Name }}-orders-mariadb"
     port: 3307
     existingSecret:
     user: dbuser
@@ -397,45 +319,18 @@ orders:
 
 mariadb:
   enabled: true
-  image:
-    registry: docker.io
-    repository: bitnami/mariadb
-    tag: 10.3.22-debian-10-r27
-    pullPolicy: IfNotPresent
-  service:
-    port: 3307
-  rootUser:
-    password: admin123
-  nameOverride: orders-mariadb
-  db:
-    user: dbuser
+  primary:
+    service:
+      ports:
+        mysql: 3307
+    persistence:
+      enabled: true
+  auth:
+    rootPassword: admin123
+    database: ordersdb
+    username: dbuser
     password: password
-    name: ordersdb
-  replication:
-    enabled: false
-  master:
-    persistence:
-      enabled: true
-      existingClaim:
-      #mountPath: ""
-      annotations: {}
-      storageClass:
-      accessMode: ReadWriteOnce
-      size: 8Gi
-    #annotations:
-    #  - key: sidecar.istio.io/inject
-    #    value: "false"
-  slave:
-    replicas: 1
-    persistence:
-      enabled: true
-      annotations: {}
-      storageClass:
-      accessMode: ReadWriteOnce
-      size: 8Gi
-    #annotations:
-    #  - key: sidecar.istio.io/inject
-    #    value: "false"
+  nameOverride: orders-mariadb
 
 web:
   enabled: true

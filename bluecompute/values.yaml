@@ -83,7 +83,7 @@ auth:
         httpsRedirect: false
 
 catalog:
-  enabled: false
+  enabled: true
   fullnameOverride: catalog
   replicaCount: 1
   image:
@@ -107,7 +107,7 @@ catalog:
     imagePullPolicy: IfNotPresent
   elasticsearch:
     protocol: http
-    host: catalog-elasticsearch-client
+    host: catalog-elasticsearch
     port: 9200
     username:
     password:
@@ -131,63 +131,20 @@ catalog:
         httpsRedirect: false
 
 elasticsearch:
-  enabled: false
+  enabled: true
   fullnameOverride: catalog-elasticsearch
-  protocol: http
-  port: 9200
-  username: ""
-  password: ""
-  healthcheck: "_cat/health"
-  cacertificatebase64: ""
-  appVersion: 7.10.2  # Updated to a more recent version
-  image:
-    repository: docker.elastic.co/elasticsearch/elasticsearch-oss
-    tag: 7.10.2  # Updated to match the appVersion
-    pullPolicy: IfNotPresent
-    # pullSecrets:
-    # - sa-default
-  serviceAccounts:
-    client:
-      create: false
-      name: ""
-    master:
-      create: false
-      name: ""
-    data:
-      create: false
-      name: ""
-  initImage:
-    repository: "busybox"
-    tag: "1.36.1"  # Updated to a stable version
-    pullPolicy: "Always"
-  cluster:
-    env:
-      MINIMUM_MASTER_NODES: "2"
-  client:
-    replicas: 1
-    serviceType: ClusterIP
-    # podAnnotations:
-    #   sidecar.istio.io/inject: "false"
   master:
-    replicas: 2
+    replicaCount: 2
     persistence:
       enabled: false
-      size: 4Gi
-      storageClass: ""
-      accessMode: ReadWriteOnce
-    # podAnnotations:
-    #   sidecar.istio.io/inject: "false"
+  coordinating:
+    replicaCount: 1
   data:
-    replicas: 1
+    replicaCount: 1
     persistence:
       enabled: false
-      size: 30Gi
-      storageClass: ""
-      accessMode: ReadWriteOnce
-    # podAnnotations:
-    #   sidecar.istio.io/inject: "false"
-  sysctlInitContainer:
-    enabled: true
+  ingest:
+    replicaCount: 1
 
 customer:
   enabled: true
@@ -219,7 +176,7 @@ customer:
     secretName:
     secret:
   couchdb:
-    host: customer-couchdb-svc-couchdb
+    host: "{{ .Release.Name }}-svc-couchdb"
     protocol: http
     port: 5985
     existingSecret:
@@ -245,63 +202,18 @@ customer:
 
 couchdb:
   enabled: true
-  image:
-    repository: "couchdb"
-    tag: "3.3.3"  # Updated to the latest stable version
-    pullPolicy: IfNotPresent
-  fullnameOverride: customer-couchdb
-  protocol: http
-  createAdminSecret: true
   adminUsername: user
   adminPassword: passw0rd
   service:
     externalPort: 5985
   clusterSize: 1
+  couchdbConfig:
+    couchdb:
+      uuid: decafbaddecafbaddecafbaddecafbad
   persistentVolume:
     enabled: false
-    size: 10Gi
-    accessModes:
-      - ReadWriteOnce
-    storageClass: ""
-  searchImage:
-    repository: kocolosk/couchdb-search
-    tag: 0.2.0  # Updated search image to the latest version
-    pullPolicy: IfNotPresent
-  initImage:
-    repository: "busybox"
-    tag: "1.36.1"  # Updated to a stable version
-    pullPolicy: "Always"
-  networkPolicy:
-    enabled: true
-  allowAdminParty: false
-  autoSetup:
-    enabled: false
-  podManagementPolicy: Parallel
-  serviceAccount:
-    enabled: true
-    create: true
-  persistentVolumeClaimRetentionPolicy:
-    enabled: false
-    whenScaled: Retain
-    whenDeleted: Retain
-  couchdbConfig:
-    chttpd:
-      bind_address: any
-      require_valid_user: false
-  livenessProbe:
-    enabled: true
-    failureThreshold: 3
-    initialDelaySeconds: 0
-    periodSeconds: 10
-    successThreshold: 1
-    timeoutSeconds: 1
-  readinessProbe:
-    enabled: true
-    failureThreshold: 3
-    initialDelaySeconds: 0
-    periodSeconds: 10
-    successThreshold: 1
-    timeoutSeconds: 1
+  #annotations:
+  #  sidecar.istio.io/inject: "false"
 
 inventory:
   enabled: true
@@ -328,8 +240,8 @@ inventory:
     password: password
     database: inventorydb
     # For mysql init container
-    image: "mysql"
-    imageTag: "5.7.14"
+    image: "bitnami/mysql"
+    imageTag: "8.4.3-debian-12-r4"
     imagePullPolicy: IfNotPresent
   istio:
     enabled: false
@@ -350,34 +262,15 @@ inventory:
 
 mysql:
   enabled: true
-  image: "bitnami/mysql"
-  imageTag: "8.4.3-debian-12-r4"
-  imagePullPolicy: IfNotPresent
   fullnameOverride: inventory-mysql
-  mysqlRootPassword: admin123
-  mysqlUser: dbuser
-  mysqlPassword: password
-  mysqlDatabase: inventorydb
-  service:
-    port: 3306
-  persistence:
-    enabled: false
-    size: 8Gi
-    storageClass: ""
-    accessMode: ReadWriteOnce
-    existingClaim: ""
-    subPath: ""
-    annotations: {}
-  tls:
-    enabled: false
-  metrics:
-    enabled: false
-  networkPolicy:
-    enabled: true
-    allowExternal: true
-  busybox:
-    image: "busybox"
-    tag: "latest"
+  auth:
+    rootPassword: admin123
+    database: inventorydb
+    username: dbuser
+    password: password
+  primary:
+    persistence:
+      enabled: true
 
 orders:
   enabled: true
@@ -404,8 +297,7 @@ orders:
     secretName:
     secret:
   mariadb:
-    # Leaving empty so it gets name form release name and nameOverride
-    host:
+    host: "{{ .Release.Name }}-orders-mariadb"
     port: 3307
     existingSecret:
     user: dbuser
@@ -430,38 +322,18 @@ orders:
 
 mariadb:
   enabled: true
-  image:
-    registry: docker.io
-    repository: bitnami/mariadb
-    tag: 11.4.4-debian-12-r2
-    pullPolicy: IfNotPresent
-  service:
-    ports:
-      mysql: 3307
+  primary:
+    service:
+      ports:
+        mysql: 3307
+    persistence:
+      enabled: false
   auth:
     rootPassword: admin123
     database: ordersdb
     username: dbuser
     password: password
-  architecture: standalone
-  primary:
-    persistence:
-      enabled: false
-      existingClaim: ""
-      annotations: {}
-      storageClass: ""
-      accessModes:
-        - ReadWriteOnce
-      size: 8Gi
-  secondary:
-    replicaCount: 1
-    persistence:
-      enabled: false
-      annotations: {}
-      storageClass: ""
-      accessModes:
-        - ReadWriteOnce
-      size: 8Gi
+  nameOverride: orders-mariadb
 
 web:
   enabled: true
