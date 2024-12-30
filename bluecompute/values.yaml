@@ -52,7 +52,7 @@ auth:
     nodePort: 32383
   resources:
     limits:
-      memory: 384Mi
+      memory: 1Gi
     requests:
       memory: 64Mi
   bash:
@@ -96,13 +96,13 @@ catalog:
     nodePort: 32381
   resources:
     limits:
-      memory: 384Mi
+      memory: 2Gi
     requests:
       memory: 64Mi
   inventory:
     url: http://inventory:8080
   curl:
-    image: alexeiled/curl
+    image: curlimages/curl
     imageTag: latest
     imagePullPolicy: IfNotPresent
   elasticsearch:
@@ -160,7 +160,7 @@ customer:
     nodePort: 32382
   resources:
     limits:
-      memory: 384Mi
+      memory: 1Gi
     requests:
       memory: 64Mi
   testUser:
@@ -176,11 +176,11 @@ customer:
     secretName:
     secret:
   couchdb:
-    host: "{{ .Release.Name }}-svc-couchdb"
+    host: "bluecompute-svc-couchdb"
     protocol: http
-    port: 5985
+    port: 5984
     existingSecret:
-    adminUsername: user
+    adminUsername: admin
     adminPassword: passw0rd
     database: customers
   istio:
@@ -202,10 +202,8 @@ customer:
 
 couchdb:
   enabled: true
-  adminUsername: user
+  adminUsername: admin
   adminPassword: passw0rd
-  service:
-    externalPort: 5985
   clusterSize: 1
   couchdbConfig:
     couchdb:
@@ -229,7 +227,7 @@ inventory:
     nodePort: 32380
   resources:
     limits:
-      memory: 384Mi
+      memory: 1Gi
     requests:
       memory: 64Mi
   mysql:
@@ -270,7 +268,7 @@ mysql:
     password: password
   primary:
     persistence:
-      enabled: true
+      enabled: false
 
 orders:
   enabled: true
@@ -278,7 +276,7 @@ orders:
   replicaCount: 1
   image:
     repository: fabiogomezdiaz/bluecompute-orders
-    tag: 0.6.0
+    tag: 0.7.0
     pullPolicy: Always
   service:
     type: ClusterIP
@@ -286,19 +284,19 @@ orders:
     nodePort: 32384
   resources:
     limits:
-      memory: 384Mi
+      memory: 1Gi
     requests:
       memory: 64Mi
   mysql:
-    image: "mysql"
-    imageTag: "5.7.14"
+    image: "bitnami/mysql"
+    imageTag: "8.4.3-debian-12-r4"
     imagePullPolicy: IfNotPresent
   hs256key:
     secretName:
     secret:
   mariadb:
-    host: "{{ .Release.Name }}-orders-mariadb"
-    port: 3307
+    host: "bluecompute-orders-mariadb"
+    port: 3306
     existingSecret:
     user: dbuser
     password: password
@@ -320,20 +318,17 @@ orders:
         mode: SIMPLE
         httpsRedirect: false
 
-mariadb:
+orders-mysql:
   enabled: true
-  primary:
-    service:
-      ports:
-        mysql: 3307
-    persistence:
-      enabled: false
+  fullnameOverride: orders-mysql
   auth:
     rootPassword: admin123
     database: ordersdb
     username: dbuser
     password: password
-  nameOverride: orders-mariadb
+  primary:
+    persistence:
+      enabled: false
 
 web:
   enabled: true
