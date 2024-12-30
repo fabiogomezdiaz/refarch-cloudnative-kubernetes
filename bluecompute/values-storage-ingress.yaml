@@ -1,0 +1,397 @@
+# Declare variables to be passed into your templates.
+global:
+  hs256key:
+    secretName: bluecompute-hs256key
+    secret: E6526VJkKYhyTFRFMC0pTECpHcZ7TGcq8pKsVVgz9KtESVpheEO284qKzfzg8HpWNBPeHOxNGlyudUHi6i8tFQJXC8PiI48RUpMh23vPDLGD35pCM0417gf58z5xlmRNii56fwRCmIhhV7hDsm3KO2jRv4EBVz7HrYbzFeqI45CaStkMYNipzSm2duuer7zRdMjEKIdqsby0JfpQpykHmC5L6hxkX0BT7XWqztTr6xHCwqst26O0g8r7bXSYjp4a
+  cluster:
+    name: "my-cluster"
+    region: us-south
+  istio:
+    enabled: false
+    gateway:
+      enabled: false
+      name:
+      hosts:
+        - "*.bluecompute.com"
+      TLS:
+        enabled: false
+        # SIMPLE, MUTUAL
+        mode: SIMPLE
+        httpsRedirect: false
+        serverCertificate: /etc/istio/ingressgateway-certs/tls.crt
+        privateKey: /etc/istio/ingressgateway-certs/tls.key
+        caCertificates: /etc/istio/ingressgateway-ca-certs/ca-chain.cert.pem
+
+ingress:
+  enabled: true
+  hosts:
+    app:
+      - bluecompute.fabiogomezdiaz.app
+      - bluecompute.apps.rke131.fabiongo.com
+    api:
+      - api.bluecompute.fabiogomezdiaz.app
+      - api.bluecompute.apps.rke131.fabiongo.com
+  # annotations:
+  #   nginx.ingress.kubernetes.io/rewrite-target: /
+  enableTLS: false
+  TLS:
+  - secretName: fabiogomezdiaz-app-tls
+    hosts:
+      - bluecompute.fabiogomezdiaz.app
+      - api.bluecompute.fabiogomezdiaz.app
+  - secretName: rke131-app-tls
+    hosts:
+      - bluecompute.apps.rke131.fabiongo.com
+      - api.bluecompute.apps.rke131.fabiongo.com
+
+route:
+  enabled: false
+
+auth:
+  enabled: true
+  fullnameOverride: auth
+  replicaCount: 1
+  image:
+    repository: fabiogomezdiaz/bluecompute-auth
+    tag: 0.6.0
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 8083
+    nodePort: 32383
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      memory: 64Mi
+  bash:
+    image:
+      repository: fabiogomezdiaz/bash-curl-ssl
+      tag: latest
+      pullPolicy: IfNotPresent
+  hs256key:
+    secretName:
+    secret:
+  customer:
+    url: http://customer:8082
+  istio:
+    enabled: false
+    # ISTIO_MUTUAL, SIMPLE, DISABLE
+    mTLS: ISTIO_MUTUAL
+    # LEAST_CONN, ROUND_ROBIN
+    loadBalancer: LEAST_CONN
+    gateway:
+      enabled: false
+      name:
+      hosts:
+        - "auth.bluecompute.com"
+      TLS:
+        enabled: false
+        # SIMPLE, MUTUAL
+        mode: SIMPLE
+        httpsRedirect: false
+
+catalog:
+  enabled: false
+  fullnameOverride: catalog
+  replicaCount: 1
+  image:
+    repository: fabiogomezdiaz/bluecompute-catalog
+    tag: 0.6.0
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 8081
+    nodePort: 32381
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      memory: 64Mi
+  inventory:
+    url: http://inventory:8080
+  curl:
+    image: curlimages/curl
+    imageTag: latest
+    imagePullPolicy: IfNotPresent
+  elasticsearch:
+    protocol: http
+    host: catalog-elasticsearch
+    port: 9200
+    username:
+    password:
+    healthcheck: "_cat/health"
+    cacertificatebase64:
+  istio:
+    enabled: false
+    # ISTIO_MUTUAL, SIMPLE, DISABLE
+    mTLS: ISTIO_MUTUAL
+    # LEAST_CONN, ROUND_ROBIN
+    loadBalancer: LEAST_CONN
+    gateway:
+      enabled: false
+      name:
+      hosts:
+        - "catalog.bluecompute.com"
+      TLS:
+        enabled: false
+        # SIMPLE, MUTUAL
+        mode: SIMPLE
+        httpsRedirect: false
+
+elasticsearch:
+  enabled: false
+  fullnameOverride: catalog-elasticsearch
+  master:
+    replicaCount: 2
+    persistence:
+      enabled: true
+  coordinating:
+    replicaCount: 1
+  data:
+    replicaCount: 1
+    persistence:
+      enabled: true
+  ingest:
+    replicaCount: 1
+
+customer:
+  enabled: true
+  fullnameOverride: customer
+  replicaCount: 1
+  image:
+    repository: fabiogomezdiaz/bluecompute-customer
+    tag: 0.6.0
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 8082
+    nodePort: 32382
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      memory: 64Mi
+  testUser:
+    createUser: true
+    username: user
+    password: passw0rd
+  bash:
+    image:
+      repository: fabiogomezdiaz/bash-curl-ssl
+      tag: latest
+      pullPolicy: IfNotPresent
+  hs256key:
+    secretName:
+    secret:
+  couchdb:
+    host: bluecompute-svc-couchdb
+    protocol: http
+    port: 5984
+    existingSecret:
+    adminUsername: admin
+    adminPassword: passw0rd
+    database: customers
+  istio:
+    enabled: false
+    # ISTIO_MUTUAL, SIMPLE, DISABLE
+    mTLS: ISTIO_MUTUAL
+    # LEAST_CONN, ROUND_ROBIN
+    loadBalancer: LEAST_CONN
+    gateway:
+      enabled: false
+      name:
+      hosts:
+        - "customer.bluecompute.com"
+      TLS:
+        enabled: false
+        # SIMPLE, MUTUAL
+        mode: SIMPLE
+        httpsRedirect: false
+
+couchdb:
+  enabled: true
+  adminUsername: admin
+  adminPassword: passw0rd
+  clusterSize: 1
+  couchdbConfig:
+    couchdb:
+      uuid: decafbaddecafbaddecafbaddecafbad
+  persistentVolume:
+    enabled: true
+  #annotations:
+  #  sidecar.istio.io/inject: "false"
+
+inventory:
+  enabled: true
+  fullnameOverride: inventory
+  replicaCount: 1
+  image:
+    repository: fabiogomezdiaz/bluecompute-inventory
+    tag: 0.6.0
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 8080
+    nodePort: 32380
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      memory: 64Mi
+  mysql:
+    host: inventory-mysql
+    port: 3306
+    existingSecret:
+    user: dbuser
+    password: password
+    database: inventorydb
+    # For mysql init container
+    image: "bitnami/mysql"
+    imageTag: "8.4.3-debian-12-r4"
+    imagePullPolicy: IfNotPresent
+  istio:
+    enabled: false
+    # ISTIO_MUTUAL, SIMPLE, DISABLE
+    mTLS: ISTIO_MUTUAL
+    # LEAST_CONN, ROUND_ROBIN
+    loadBalancer: LEAST_CONN
+    gateway:
+      enabled: false
+      name:
+      hosts:
+        - "inventory.bluecompute.com"
+      TLS:
+        enabled: false
+        # SIMPLE, MUTUAL
+        mode: SIMPLE
+        httpsRedirect: false
+
+mysql:
+  enabled: true
+  fullnameOverride: inventory-mysql
+  auth:
+    rootPassword: admin123
+    database: inventorydb
+    username: dbuser
+    password: password
+  primary:
+    persistence:
+      enabled: true
+
+orders:
+  enabled: true
+  fullnameOverride: orders
+  replicaCount: 1
+  image:
+    repository: fabiogomezdiaz/bluecompute-orders
+    tag: 0.7.0
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 8084
+    nodePort: 32384
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      memory: 64Mi
+  mysql:
+    image: "bitnami/mysql"
+    imageTag: "8.4.3-debian-12-r4"
+    imagePullPolicy: IfNotPresent
+  hs256key:
+    secretName:
+    secret:
+  mariadb:
+    host: orders-mysql
+    port: 3306
+    existingSecret:
+    user: dbuser
+    password: password
+    database: ordersdb
+  istio:
+    enabled: false
+    # ISTIO_MUTUAL, SIMPLE, DISABLE
+    mTLS: ISTIO_MUTUAL
+    # LEAST_CONN, ROUND_ROBIN
+    loadBalancer: LEAST_CONN
+    gateway:
+      enabled: false
+      name:
+      hosts:
+        - "orders.bluecompute.com"
+      TLS:
+        enabled: false
+        # SIMPLE, MUTUAL
+        mode: SIMPLE
+        httpsRedirect: false
+
+orders-mysql:
+  enabled: true
+  fullnameOverride: orders-mysql
+  auth:
+    rootPassword: admin123
+    database: ordersdb
+    username: dbuser
+    password: password
+  primary:
+    persistence:
+      enabled: false
+
+web:
+  enabled: true
+  fullnameOverride: web
+  replicaCount: 1
+  image:
+    repository: fabiogomezdiaz/bluecompute-web
+    tag: 0.6.0
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    externalPort: 80
+    nodePort: 31337
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  services:
+    auth:
+      protocol: http
+      host: auth
+      port: 8083
+    catalog:
+      protocol: http
+      host: inventory
+      port: 8080
+    customer:
+      protocol: http
+      host: customer
+      port: 8082
+    orders:
+      protocol: http
+      host: orders
+      port: 8084
+    reviews:
+      protocol: http
+      host:
+      port:
+  istio:
+    enabled: false
+    # ISTIO_MUTUAL, SIMPLE, DISABLE
+    mTLS: ISTIO_MUTUAL
+    # LEAST_CONN, ROUND_ROBIN
+    loadBalancer: LEAST_CONN
+    gateway:
+      enabled: true
+      name:
+      hosts:
+        - "*"
+      TLS:
+        enabled: false
+        # SIMPLE, MUTUAL
+        mode: SIMPLE
+        httpsRedirect: false

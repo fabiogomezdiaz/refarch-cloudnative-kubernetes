@@ -2,87 +2,125 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ template "bluecompute.fullname" . }}
-{{- if .Values.ingress.annotations }}
-  annotations:
-{{ toYaml .Values.ingress.annotations | indent 4 }}
-{{- end }}
+  name: {{ include "bluecompute.fullname" . }}
   labels:
-    {{- include "bluecompute.labels" . | indent 4 }}
+    {{- include "bluecompute.labels" . | nindent 4 }}
+  {{- if .Values.ingress.annotations }}
+  annotations:
+  {{- toYaml .Values.ingress.annotations | nindent 4 }}
+  {{- end }}
 spec:
   {{- if .Values.ingress.enableTLS }}
   tls:
-{{ toYaml .Values.ingress.TLS | indent 4 }}
+    {{- range .Values.ingress.TLS }}
+    - secretName: {{ .secretName }}
+      hosts:
+        {{- range .hosts }}
+        - {{ . }}
+        {{- end }}
+    {{- end }}
   {{- end }}
   rules:
-  - host: {{ .Values.ingress.hostnames.app | default "" }}
-    http:
-      paths:
-      - path: {{ .Values.web.ingress.path }}
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.web.fullnameOverride }}
-            port:
-              number: {{ .Values.web.service.externalPort }}
-  {{- if .Values.auth.enabled }}
-  - host: {{ .Values.ingress.hostnames.api | default "" }}
-    http:
-      paths:
-      - path: {{ .Values.auth.ingress.path }}
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.auth.fullnameOverride }}
-            port:
-              number: {{ .Values.auth.service.externalPort }}
-  {{- end }}
-  {{- if .Values.catalog.enabled }}
-  - host: {{ .Values.ingress.hostnames.api | default "" }}
-    http:
-      paths:
-      - path: {{ .Values.catalog.ingress.path }}
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.catalog.fullnameOverride }}
-            port:
-              number: {{ .Values.catalog.service.externalPort }}
-  {{- end }}
-  {{- if .Values.customer.enabled }}
-  - host: {{ .Values.ingress.hostnames.api | default "" }}
-    http:
-      paths:
-      - path: {{ .Values.customer.ingress.path }}
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.customer.fullnameOverride }}
-            port:
-              number: {{ .Values.customer.service.externalPort }}
-  {{- end }}
-  {{- if .Values.inventory.enabled }}
-  - host: {{ .Values.ingress.hostnames.api | default "" }}
-    http:
-      paths:
-      - path: {{ .Values.inventory.ingress.path }}
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.inventory.fullnameOverride }}
-            port:
-              number: {{ .Values.inventory.service.externalPort }}
-  {{- end }}
-  {{- if .Values.orders.enabled }}
-  - host: {{ .Values.ingress.hostnames.api | default "" }}
-    http:
-      paths:
-      - path: {{ .Values.orders.ingress.path }}
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Values.orders.fullnameOverride }}
-            port:
-              number: {{ .Values.orders.service.externalPort }}
+    # APP Hostnames
+    {{- range .Values.ingress.hosts.app }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Values.web.fullnameOverride }}
+                port:
+                  number: {{ $.Values.web.service.externalPort }}
+    {{- end }}
+
+    # API Hostnames for Auth
+    {{- if .Values.auth.enabled }}
+    {{- range .Values.ingress.hosts.api }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $.Values.auth.ingress.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Values.auth.fullnameOverride }}
+                port:
+                  number: {{ $.Values.auth.service.externalPort }}
+    {{- end }}
+    {{- end }}
+
+    # API Hostnames for Catalog
+    {{- if .Values.catalog.enabled }}
+    {{- range .Values.ingress.hosts.api }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $.Values.catalog.ingress.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Values.catalog.fullnameOverride }}
+                port:
+                  number: {{ $.Values.catalog.service.externalPort }}
+    {{- end }}
+    {{- end }}
+
+    # API Hostnames for Customer
+    {{- if .Values.customer.enabled }}
+    {{- range .Values.ingress.hosts.api }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $.Values.customer.ingress.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Values.customer.fullnameOverride }}
+                port:
+                  number: {{ $.Values.customer.service.externalPort }}
+    {{- end }}
+    {{- end }}
+
+    # API Hostnames for Inventory
+    {{- if .Values.inventory.enabled }}
+    {{- range .Values.ingress.hosts.api }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $.Values.inventory.ingress.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Values.inventory.fullnameOverride }}
+                port:
+                  number: {{ $.Values.inventory.service.externalPort }}
+    {{- end }}
+    {{- end }}
+
+    # API Hostnames for Orders
+    {{- if .Values.orders.enabled }}
+    {{- range .Values.ingress.hosts.api }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: {{ $.Values.orders.ingress.path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Values.orders.fullnameOverride }}
+                port:
+                  number: {{ $.Values.orders.service.externalPort }}
+    {{- end }}
+    {{- end }}
+
+  # Fallback default backend if no rules are specified
+  {{- if not (or .Values.ingress.hosts.app .Values.ingress.hosts.api) }}
+  defaultBackend:
+    service:
+      name: {{ $.Values.web.fullnameOverride }}
+      port:
+        number: {{ $.Values.web.service.externalPort }}
   {{- end }}
 {{- end }}
