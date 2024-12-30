@@ -5,14 +5,22 @@ clean:
 
 # Prompt user for app and api ingress FQDNs and install Helm chart
 install:
+	# helm dependency update bluecompute; \
+	helm upgrade --install bluecompute bluecompute \
+	--namespace bluecompute --create-namespace \
+	--values bluecompute/values.yaml # --dry-run --debug
+
+install-ingress:
 	@read -p "Enter App Ingress FQDN: " APP_FQDN; \
 	read -p "Enter API Ingress FQDN: " API_FQDN; \
-	helm upgrade --install bluecompute charts/bluecompute-0.0.9.tgz \
+	helm dependency update bluecompute; \
+	set -x; \
+	helm upgrade --install bluecompute bluecompute \
 	--namespace bluecompute --create-namespace \
 	--values bluecompute/values.yaml \
 	--set ingress.enabled=true \
 	--set ingress.hostnames.app=$$APP_FQDN \
-	--set ingress.hostnames.api=$$API_FQDN
+	--set ingress.hostnames.api=$$API_FQDN # --dry-run --debug
 
 # Default target
 all: install
