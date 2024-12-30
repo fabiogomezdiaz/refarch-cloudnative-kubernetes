@@ -131,7 +131,7 @@ catalog:
         httpsRedirect: false
 
 elasticsearch:
-  enabled: true
+  enabled: false
   fullnameOverride: catalog-elasticsearch
   master:
     replicaCount: 2

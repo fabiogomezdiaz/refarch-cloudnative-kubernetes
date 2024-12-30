@@ -83,7 +83,7 @@ auth:
         httpsRedirect: false
 
 catalog:
-  enabled: true
+  enabled: false
   fullnameOverride: catalog
   replicaCount: 1
   image:
@@ -131,7 +131,7 @@ catalog:
         httpsRedirect: false
 
 elasticsearch:
-  enabled: true
+  enabled: false
   fullnameOverride: catalog-elasticsearch
   master:
     replicaCount: 2
