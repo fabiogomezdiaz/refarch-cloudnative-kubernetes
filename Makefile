@@ -23,6 +23,13 @@ install-ingress:
 	--set ingress.hostnames.api=$$API_FQDN # --dry-run --debug
 
 install-storage-ingress:
+	# helm dependency update bluecompute; \
+	set -x; \
+	helm upgrade --install bluecompute bluecompute \
+	--namespace bluecompute --create-namespace \
+	--values bluecompute/values-storage-ingress.yaml # --dry-run --debug
+
+install-storage-ingress-old:
 	@read -p "Enter App Ingress FQDN: " APP_FQDN; \
 	read -p "Enter API Ingress FQDN: " API_FQDN; \
 	helm dependency update bluecompute; \
